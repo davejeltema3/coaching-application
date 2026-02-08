@@ -5,20 +5,20 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Apply — Boundless Creator Program',
+  title: 'BCP Application — Boundless Creator Program',
   description:
-    'Apply for 1:1 YouTube coaching with Dave Jeltema. Transform your channel with personalized guidance and proven strategies.',
+    'Apply for the Boundless Creator Program. 1:1 YouTube coaching with Dave Jeltema to grow your channel with proven strategies.',
   openGraph: {
-    title: 'Apply — Boundless Creator Program',
+    title: 'BCP Application — Boundless Creator Program',
     description:
-      'Apply for 1:1 YouTube coaching with Dave Jeltema. Transform your channel with personalized guidance and proven strategies.',
+      'Apply for the Boundless Creator Program. 1:1 YouTube coaching with Dave Jeltema to grow your channel with proven strategies.',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Apply — Boundless Creator Program',
+    title: 'BCP Application — Boundless Creator Program',
     description:
-      'Apply for 1:1 YouTube coaching with Dave Jeltema. Transform your channel with personalized guidance and proven strategies.',
+      'Apply for the Boundless Creator Program. 1:1 YouTube coaching with Dave Jeltema to grow your channel with proven strategies.',
   },
 };
 
@@ -33,7 +33,7 @@ export default function RootLayout({
         {children}
         <footer className="fixed bottom-4 left-0 right-0 text-center text-slate-500 text-xs space-y-1">
           <div>Powered by Boundless Creator</div>
-          <div className="text-slate-600">I&apos;ll never message you other than for verification purposes.</div>
+          <div className="text-slate-600">Your info stays private. No spam, no selling your data.</div>
         </footer>
       </body>
     </html>

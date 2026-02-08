@@ -14,7 +14,7 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           <div className="mb-6 flex justify-center">
             <img
               src="/images/logo.png"
-              alt="Logo"
+              alt="Boundless Creator"
               onError={() => setLogoError(true)}
               className="max-h-[60px] object-contain"
             />
@@ -22,11 +22,11 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
         )}
         <div className="bg-slate-900 border border-slate-800 rounded-lg p-8 md:p-12 shadow-xl">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Apply for 1:1 Coaching
+            BCP Application
           </h1>
           <p className="text-lg md:text-xl text-slate-300 mb-8 leading-relaxed">
             Thanks for your interest in the <span className="text-blue-400 font-semibold">Boundless Creator Program</span>.
-            This short application helps me figure out if we&apos;re a good fit.
+            This quick application helps me understand where you&apos;re at and if we&apos;re a good fit.
           </p>
           <p className="text-slate-400 mb-10">Takes about 2 minutes.</p>
           <button

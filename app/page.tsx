@@ -217,7 +217,7 @@ export default function Home() {
         <div className="pt-6 flex justify-center">
           <img
             src="/images/logo.png"
-            alt="Logo"
+            alt="Boundless Creator"
             onError={() => setLogoError(true)}
             className="max-h-[60px] object-contain"
           />

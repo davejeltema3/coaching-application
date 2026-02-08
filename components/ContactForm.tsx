@@ -85,7 +85,7 @@ export default function ContactForm({ data, onChange, phoneError }: ContactFormP
           <p className="text-red-400 text-sm mt-2">{phoneError}</p>
         ) : (
           <p className="text-xs text-slate-500 mt-2">
-            I&apos;ll reach out via WhatsApp to schedule my call
+            I may reach out personally to follow up on your application
           </p>
         )}
       </div>

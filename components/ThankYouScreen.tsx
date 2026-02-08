@@ -19,7 +19,7 @@ export default function ThankYouScreen({
             <div className="mb-6 flex justify-center">
               <img
                 src="/images/logo.png"
-                alt="Logo"
+                alt="Boundless Creator"
                 onError={() => setLogoError(true)}
                 className="max-h-[60px] object-contain"
               />
@@ -82,7 +82,7 @@ export default function ThankYouScreen({
           <div className="mb-6 flex justify-center">
             <img
               src="/images/logo.png"
-              alt="Logo"
+              alt="Boundless Creator"
               onError={() => setLogoError(true)}
               className="max-h-[60px] object-contain"
             />
@@ -93,7 +93,7 @@ export default function ThankYouScreen({
             Thanks for your interest!
           </h1>
           <p className="text-lg text-slate-300 mb-6 leading-relaxed">
-            Based on your answers, the 1:1 program might not be the best fit
+            Based on your answers, the BCP might not be the best fit
             right now — and I&apos;d rather be honest about that than take your
             money.
           </p>
