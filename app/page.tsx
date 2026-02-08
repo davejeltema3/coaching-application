@@ -19,6 +19,9 @@ export default function Home() {
   const [qualified, setQualified] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [calBookingUrl, setCalBookingUrl] = useState<string>();
+  const [channelUrlError, setChannelUrlError] = useState<string>();
+  const [phoneError, setPhoneError] = useState<string>();
+  const [logoError, setLogoError] = useState(false);
 
   // Capture UTM parameters on mount
   useEffect(() => {
@@ -74,6 +77,26 @@ export default function Home() {
 
   const updateFormData = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    
+    // Clear errors when user types
+    if (field === 'channel_url') {
+      setChannelUrlError(undefined);
+    }
+    if (field === 'phone') {
+      setPhoneError(undefined);
+    }
+  };
+
+  const validateChannelUrl = (url: string): boolean => {
+    if (!url) return false;
+    const lowercaseUrl = url.toLowerCase();
+    return lowercaseUrl.includes('youtube.com') || lowercaseUrl.includes('youtu.be') || lowercaseUrl.includes('@');
+  };
+
+  const validatePhone = (phone: string): boolean => {
+    if (!phone) return false;
+    const digits = phone.replace(/\D/g, '');
+    return digits.length >= 10;
   };
 
   const handleStart = () => {
@@ -83,6 +106,14 @@ export default function Home() {
   const handleNext = () => {
     const currentQuestion = questions[currentQuestionIndex];
     const currentAnswer = formData[currentQuestion.id as keyof FormData];
+
+    // Validate YouTube channel URL
+    if (currentQuestion.id === 'channel_url' && currentAnswer) {
+      if (!validateChannelUrl(currentAnswer)) {
+        setChannelUrlError('Please enter a valid YouTube channel URL (must contain youtube.com, youtu.be, or @)');
+        return;
+      }
+    }
 
     // Check if this answer disqualifies
     if (currentQuestion.type === 'multiple-choice' && currentQuestion.choices) {
@@ -115,6 +146,13 @@ export default function Home() {
 
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate phone number
+    if (formData.phone && !validatePhone(formData.phone)) {
+      setPhoneError('Please enter a valid phone number (at least 10 digits)');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -175,6 +213,16 @@ export default function Home() {
 
   return (
     <>
+      {!logoError && (
+        <div className="pt-6 flex justify-center">
+          <img
+            src="/images/logo.png"
+            alt="Logo"
+            onError={() => setLogoError(true)}
+            className="max-h-[60px] object-contain"
+          />
+        </div>
+      )}
       <ProgressBar current={currentStep} total={totalSteps} />
       <div className="min-h-screen flex items-center justify-center py-12 px-4">
         <div className="w-full max-w-3xl">
@@ -190,12 +238,22 @@ export default function Home() {
                     subtext={question.subtext}
                   >
                     {question.type === 'multiple-choice' && question.choices && (
-                      <MultipleChoice
-                        choices={question.choices}
-                        value={currentAnswer}
-                        onChange={(value) => updateFormData(question.id, value)}
-                        onNext={handleNext}
-                      />
+                      <>
+                        <MultipleChoice
+                          choices={question.choices}
+                          value={currentAnswer}
+                          onChange={(value) => updateFormData(question.id, value)}
+                          onNext={handleNext}
+                        />
+                        {currentQuestionIndex > 0 && (
+                          <button
+                            onClick={handleBack}
+                            className="mt-6 px-6 py-3 text-slate-400 hover:text-white transition-colors"
+                          >
+                            ← Back
+                          </button>
+                        )}
+                      </>
                     )}
 
                     {question.type === 'text' && (
@@ -235,6 +293,7 @@ export default function Home() {
                           placeholder={question.placeholder}
                           type="url"
                           required={question.required}
+                          error={question.id === 'channel_url' ? channelUrlError : undefined}
                         />
                         <div className="flex gap-4 mt-6">
                           {currentQuestionIndex > 0 && (
@@ -272,6 +331,7 @@ export default function Home() {
                     phone: formData.phone,
                   }}
                   onChange={(field, value) => updateFormData(field, value)}
+                  phoneError={phoneError}
                 />
                 <div className="flex gap-4 mt-8">
                   <button

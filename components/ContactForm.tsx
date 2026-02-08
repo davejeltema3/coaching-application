@@ -10,9 +10,10 @@ interface ContactFormData {
 interface ContactFormProps {
   data: ContactFormData;
   onChange: (field: keyof ContactFormData, value: string) => void;
+  phoneError?: string;
 }
 
-export default function ContactForm({ data, onChange }: ContactFormProps) {
+export default function ContactForm({ data, onChange, phoneError }: ContactFormProps) {
   const handleChange = (field: keyof ContactFormData) => (
     e: ChangeEvent<HTMLInputElement>
   ) => {
@@ -74,11 +75,19 @@ export default function ContactForm({ data, onChange }: ContactFormProps) {
           value={data.phone || ''}
           onChange={handleChange('phone')}
           required
-          className="w-full bg-slate-800 border-2 border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+          className={`w-full bg-slate-800 border-2 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none transition-all ${
+            phoneError
+              ? 'border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20'
+              : 'border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
+          }`}
         />
-        <p className="text-xs text-slate-500 mt-2">
-          I&apos;ll reach out via WhatsApp to schedule our call
-        </p>
+        {phoneError ? (
+          <p className="text-red-400 text-sm mt-2">{phoneError}</p>
+        ) : (
+          <p className="text-xs text-slate-500 mt-2">
+            I&apos;ll reach out via WhatsApp to schedule my call
+          </p>
+        )}
       </div>
     </div>
   );

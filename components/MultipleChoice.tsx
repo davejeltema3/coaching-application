@@ -25,8 +25,6 @@ export default function MultipleChoice({
     <div className="space-y-3">
       {choices.map((choice, index) => {
         const isSelected = value === choice.value;
-        const shortcut = String.fromCharCode(65 + index); // A, B, C, D
-        const numberShortcut = (index + 1).toString(); // 1, 2, 3, 4
 
         return (
           <button
@@ -38,12 +36,7 @@ export default function MultipleChoice({
                 : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-blue-500 hover:bg-slate-750'
             }`}
           >
-            <div className="flex items-center justify-between">
-              <span className="text-base md:text-lg">{choice.text}</span>
-              <span className="text-xs md:text-sm opacity-50 ml-4">
-                {shortcut} / {numberShortcut}
-              </span>
-            </div>
+            <span className="text-base md:text-lg">{choice.text}</span>
           </button>
         );
       })}

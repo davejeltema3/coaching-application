@@ -22,6 +22,16 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Subscribe to Kit (ConvertKit) if configured
+    if (process.env.KIT_API_KEY && data.email && data.first_name) {
+      try {
+        await subscribeToKit(data.email, data.first_name);
+      } catch (error) {
+        console.error('Kit API error:', error);
+        // Continue even if Kit fails
+      }
+    }
+
     // Save to local backup
     try {
       await saveSubmission(data, qualification);
@@ -43,6 +53,32 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+async function subscribeToKit(email: string, firstName: string) {
+  const apiKey = process.env.KIT_API_KEY;
+  const tagId = process.env.KIT_TAG_ID;
+  
+  if (!apiKey) return;
+
+  const payload: any = {
+    email,
+    first_name: firstName,
+  };
+
+  // Add tag if configured
+  if (tagId) {
+    payload.tags = [tagId];
+  }
+
+  await fetch('https://api.kit.com/v4/subscribers', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Kit-Api-Key': apiKey,
+    },
+    body: JSON.stringify(payload),
+  });
 }
 
 async function submitToGoogleForms(data: FormData) {

@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 interface ThankYouScreenProps {
   qualified: boolean;
   calBookingUrl?: string;
@@ -5,12 +7,24 @@ interface ThankYouScreenProps {
 
 export default function ThankYouScreen({
   qualified,
-  calBookingUrl = 'https://cal.com/davejeltema/coaching-call',
+  calBookingUrl = 'https://cal.com/davejeltema/bcp-1',
 }: ThankYouScreenProps) {
+  const [logoError, setLogoError] = useState(false);
+
   if (qualified) {
     return (
       <div className="flex items-center justify-center min-h-screen px-4">
         <div className="max-w-2xl mx-auto text-center">
+          {!logoError && (
+            <div className="mb-6 flex justify-center">
+              <img
+                src="/images/logo.png"
+                alt="Logo"
+                onError={() => setLogoError(true)}
+                className="max-h-[60px] object-contain"
+              />
+            </div>
+          )}
           <div className="bg-slate-900 border border-slate-800 rounded-lg p-8 md:p-12 shadow-xl">
             <div className="mb-6">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-green-500/20 rounded-full mb-4">
@@ -30,12 +44,10 @@ export default function ThankYouScreen({
               </div>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              You&apos;re a great fit! Let&apos;s talk.
+              You&apos;re in!
             </h1>
             <p className="text-lg text-slate-300 mb-8 leading-relaxed">
-              Based on your answers, I think we could do some amazing work
-              together. Book a free strategy call below — I&apos;ll come prepared
-              with insights specific to your channel.
+              Your application looks great. Pick a time below and I&apos;ll reach out to you as soon as I can.
             </p>
             <div className="mb-8">
               <a
@@ -44,7 +56,7 @@ export default function ThankYouScreen({
                 rel="noopener noreferrer"
                 className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg px-8 py-4 rounded-lg transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-blue-500/50"
               >
-                Book Your Strategy Call →
+                Pick a Time →
               </a>
             </div>
             <p className="text-sm text-slate-400">
@@ -66,6 +78,16 @@ export default function ThankYouScreen({
   return (
     <div className="flex items-center justify-center min-h-screen px-4">
       <div className="max-w-2xl mx-auto text-center">
+        {!logoError && (
+          <div className="mb-6 flex justify-center">
+            <img
+              src="/images/logo.png"
+              alt="Logo"
+              onError={() => setLogoError(true)}
+              className="max-h-[60px] object-contain"
+            />
+          </div>
+        )}
         <div className="bg-slate-900 border border-slate-800 rounded-lg p-8 md:p-12 shadow-xl">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-6">
             Thanks for your interest!
@@ -86,7 +108,7 @@ export default function ThankYouScreen({
               rel="noopener noreferrer"
               className="block bg-slate-800 hover:bg-slate-750 text-white font-semibold px-6 py-4 rounded-lg transition-all duration-200 hover:scale-[1.02] border border-slate-700"
             >
-              📺 Watch My YouTube Channel
+              📺 Watch my YouTube Channel
             </a>
             <a
               href="https://boundlesscreator.com/newsletter"
@@ -94,11 +116,11 @@ export default function ThankYouScreen({
               rel="noopener noreferrer"
               className="block bg-slate-800 hover:bg-slate-750 text-white font-semibold px-6 py-4 rounded-lg transition-all duration-200 hover:scale-[1.02] border border-slate-700"
             >
-              ✉️ Subscribe to My Newsletter
+              ✉️ Subscribe to my Newsletter
             </a>
           </div>
           <p className="text-slate-400">
-            Keep creating — I hope we can work together in the future!
+            Keep creating — I hope I can work with you in the future!
           </p>
         </div>
       </div>
