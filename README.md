@@ -1,36 +1,143 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Coaching Application Form
+
+A custom application form for Dave Jeltema's 1:1 YouTube coaching program. Built with Next.js 14, TypeScript, and Tailwind CSS.
+
+## Features
+
+- **Typeform-style UX**: One question at a time with smooth transitions
+- **Dark theme**: Modern, professional design
+- **Keyboard navigation**: Enter to advance, A/B/C/D or 1/2/3/4 to select
+- **Smart qualification**: Server-side scoring to determine fit
+- **Mobile-first**: Fully responsive design
+- **Google Forms integration**: Optional backup to Google Sheets
+- **Local backup**: All submissions saved to `data/submissions.json`
+- **UTM tracking**: Captures marketing attribution
+
+## Tech Stack
+
+- Next.js 14 (App Router)
+- TypeScript
+- Tailwind CSS
+- Vercel (deployment)
 
 ## Getting Started
 
-First, run the development server:
+### 1. Install Dependencies
+
+```bash
+npm install
+```
+
+### 2. Configure Environment Variables
+
+Copy `.env.example` to `.env.local`:
+
+```bash
+cp .env.example .env.local
+```
+
+Edit `.env.local` with your settings:
+
+- `CAL_BOOKING_URL`: Your Cal.com booking link
+- Google Forms fields (optional, see setup below)
+
+### 3. Run Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to see the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Google Forms Integration (Optional)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+To automatically submit applications to a Google Sheet:
 
-## Learn More
+1. Create a Google Form with matching questions
+2. View the form's HTML source (right-click → View Page Source)
+3. Find the form action URL: `<form action="https://docs.google.com/forms/u/0/d/e/[FORM_ID]/formResponse"`
+4. Find field entry IDs: `<input name="entry.123456789"`
+5. Add these to your `.env.local` file
 
-To learn more about Next.js, take a look at the following resources:
+Example:
+```
+GOOGLE_FORM_ACTION_URL=https://docs.google.com/forms/u/0/d/e/1FAIpQLSexample/formResponse
+GOOGLE_FORM_FIELD_FIRST_NAME=entry.123456789
+GOOGLE_FORM_FIELD_EMAIL=entry.987654321
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Qualification Logic
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Applicants are scored based on their answers:
 
-## Deploy on Vercel
+- **Active creator = No**: Instant disqualification
+- **Investment ready = No**: Instant disqualification  
+- **Time commitment = Not sure**: Instant disqualification
+- **Duration**: 6+ months = +1 point
+- **Subscribers**: 100+ = +1 point
+- **Goal**: Full-time/business = +1 point
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Qualification threshold**: Score ≥ 3 AND no disqualifications
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deployment
+
+Deploy to Vercel:
+
+```bash
+vercel
+```
+
+Or connect your GitHub repo to Vercel for automatic deployments.
+
+### Environment Variables in Production
+
+Add all environment variables in the Vercel dashboard under Settings → Environment Variables.
+
+## Project Structure
+
+```
+app/
+├── page.tsx                 # Main application form
+├── layout.tsx              # Root layout with metadata
+├── globals.css             # Global styles and animations
+└── api/
+    └── submit/
+        └── route.ts        # Form submission API
+
+components/
+├── WelcomeScreen.tsx       # Initial welcome screen
+├── QuestionCard.tsx        # Question container
+├── MultipleChoice.tsx      # Multiple choice UI
+├── TextInput.tsx          # Text/URL input fields
+├── ContactForm.tsx        # Contact information form
+├── ProgressBar.tsx        # Top progress indicator
+└── ThankYouScreen.tsx     # Success/rejection screens
+
+lib/
+├── questions.ts           # Question definitions
+└── qualification.ts       # Scoring logic
+
+data/
+└── submissions.json       # Local backup (auto-created)
+```
+
+## Customization
+
+### Colors
+
+Edit `tailwind.config.ts` or update className values:
+- Background: `bg-slate-950`
+- Cards: `bg-slate-900`
+- Accent: `bg-blue-600`
+
+### Questions
+
+Modify `lib/questions.ts` to add/remove/edit questions.
+
+### Qualification Rules
+
+Update scoring logic in `lib/qualification.ts`.
+
+## License
+
+Private - Dave Jeltema / Boundless Creator

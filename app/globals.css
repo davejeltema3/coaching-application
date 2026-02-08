@@ -2,26 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    @apply bg-slate-950 text-white antialiased;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  /* Slide and fade transitions */
+  .slide-enter {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+
+  .slide-enter-active {
+    opacity: 1;
+    transform: translateX(0);
+    transition: all 500ms ease-out;
+  }
+
+  .slide-exit {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .slide-exit-active {
+    opacity: 0;
+    transform: translateX(-100px);
+    transition: all 500ms ease-out;
+  }
+
+  /* Smooth transitions for all interactive elements */
+  .transition-smooth {
+    @apply transition-all duration-500 ease-out;
+  }
+
+  /* Progress bar animation */
+  .progress-bar {
+    @apply transition-all duration-700 ease-out;
   }
 }

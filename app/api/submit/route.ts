@@ -1,0 +1,116 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { writeFile, readFile, mkdir } from 'fs/promises';
+import { existsSync } from 'fs';
+import { join } from 'path';
+import { FormData } from '@/lib/questions';
+import { calculateQualification } from '@/lib/qualification';
+
+export async function POST(request: NextRequest) {
+  try {
+    const data: FormData = await request.json();
+
+    // Calculate qualification server-side
+    const qualification = calculateQualification(data);
+
+    // Submit to Google Forms if configured
+    if (process.env.GOOGLE_FORM_ACTION_URL) {
+      try {
+        await submitToGoogleForms(data);
+      } catch (error) {
+        console.error('Google Forms submission error:', error);
+        // Continue even if Google Forms fails
+      }
+    }
+
+    // Save to local backup
+    try {
+      await saveSubmission(data, qualification);
+    } catch (error) {
+      console.error('Local save error:', error);
+      // Continue even if local save fails
+    }
+
+    // Return qualification result
+    return NextResponse.json({
+      qualified: qualification.qualified,
+      score: qualification.score,
+      calBookingUrl: process.env.CAL_BOOKING_URL || 'https://cal.com/davejeltema/coaching-call',
+    });
+  } catch (error) {
+    console.error('Submission error:', error);
+    return NextResponse.json(
+      { error: 'Failed to process submission' },
+      { status: 500 }
+    );
+  }
+}
+
+async function submitToGoogleForms(data: FormData) {
+  const formUrl = process.env.GOOGLE_FORM_ACTION_URL;
+  if (!formUrl) return;
+
+  // Build form data with Google Forms field entry IDs
+  const formData = new URLSearchParams();
+
+  const fieldMap: Record<string, string | undefined> = {
+    first_name: process.env.GOOGLE_FORM_FIELD_FIRST_NAME,
+    last_name: process.env.GOOGLE_FORM_FIELD_LAST_NAME,
+    email: process.env.GOOGLE_FORM_FIELD_EMAIL,
+    phone: process.env.GOOGLE_FORM_FIELD_PHONE,
+    channel_url: process.env.GOOGLE_FORM_FIELD_CHANNEL_URL,
+    challenge: process.env.GOOGLE_FORM_FIELD_CHALLENGE,
+    active_creator: process.env.GOOGLE_FORM_FIELD_ACTIVE_CREATOR,
+    duration: process.env.GOOGLE_FORM_FIELD_DURATION,
+    subscribers: process.env.GOOGLE_FORM_FIELD_SUBSCRIBERS,
+    goal: process.env.GOOGLE_FORM_FIELD_GOAL,
+    investment_ready: process.env.GOOGLE_FORM_FIELD_INVESTMENT_READY,
+    time_commitment: process.env.GOOGLE_FORM_FIELD_TIME_COMMITMENT,
+  };
+
+  // Add each field to form data
+  Object.entries(fieldMap).forEach(([key, entryId]) => {
+    const value = data[key as keyof FormData];
+    if (entryId && value) {
+      formData.append(entryId, value);
+    }
+  });
+
+  // Submit to Google Forms
+  await fetch(formUrl, {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+  });
+}
+
+async function saveSubmission(
+  data: FormData,
+  qualification: { qualified: boolean; score: number }
+) {
+  const dataDir = join(process.cwd(), 'data');
+  const filePath = join(dataDir, 'submissions.json');
+
+  // Ensure data directory exists
+  if (!existsSync(dataDir)) {
+    await mkdir(dataDir, { recursive: true });
+  }
+
+  // Read existing submissions
+  let submissions: any[] = [];
+  if (existsSync(filePath)) {
+    const content = await readFile(filePath, 'utf-8');
+    submissions = JSON.parse(content);
+  }
+
+  // Add new submission
+  submissions.push({
+    timestamp: new Date().toISOString(),
+    data,
+    qualification,
+  });
+
+  // Write back to file
+  await writeFile(filePath, JSON.stringify(submissions, null, 2));
+}
