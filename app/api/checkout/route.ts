@@ -10,7 +10,7 @@ function getStripe() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { planCode, paymentOptionId } = await request.json();
+    const { planCode, paymentOptionId, customerEmail } = await request.json();
 
     const plan = getPlan(planCode);
     if (!plan) {
@@ -34,6 +34,7 @@ export async function POST(request: NextRequest) {
       const session = await getStripe().checkout.sessions.create({
         mode: 'subscription',
         payment_method_types: ['card'],
+        ...(customerEmail ? { customer_email: customerEmail } : {}),
         line_items: [
           {
             price_data: {
@@ -74,6 +75,7 @@ export async function POST(request: NextRequest) {
       const session = await getStripe().checkout.sessions.create({
         mode: 'payment',
         payment_method_types: ['card'],
+        ...(customerEmail ? { customer_email: customerEmail } : {}),
         line_items: [
           {
             price_data: {

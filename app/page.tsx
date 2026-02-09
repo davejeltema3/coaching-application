@@ -142,6 +142,14 @@ export default function Home() {
       const result = await response.json();
       setQualified(result.qualified);
       
+      // Save applicant email for checkout pre-fill
+      if (formData.email) {
+        try {
+          localStorage.setItem('bcp_applicant_email', formData.email);
+          localStorage.setItem('bcp_applicant_name', `${formData.first_name || ''} ${formData.last_name || ''}`.trim());
+        } catch (e) { /* localStorage not available */ }
+      }
+
       // Get Cal.com URL if available
       if (result.calBookingUrl) {
         setCalBookingUrl(result.calBookingUrl);

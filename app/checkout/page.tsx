@@ -19,6 +19,13 @@ export default function CheckoutPage() {
     }
   }, []);
 
+  // Get applicant email from localStorage or URL param for Stripe pre-fill
+  const getApplicantEmail = (): string | undefined => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('email') || 
+      (typeof window !== 'undefined' ? localStorage.getItem('bcp_applicant_email') || undefined : undefined);
+  };
+
   const handleCheckout = async () => {
     if (!plan || !selectedOption) return;
     setIsLoading(true);
@@ -31,6 +38,7 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           planCode: plan.code,
           paymentOptionId: selectedOption,
+          customerEmail: getApplicantEmail(),
         }),
       });
 
