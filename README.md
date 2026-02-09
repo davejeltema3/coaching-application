@@ -1,143 +1,88 @@
-# Coaching Application Form
+# BCP Application
 
-A custom application form for Dave Jeltema's 1:1 YouTube coaching program. Built with Next.js 14, TypeScript, and Tailwind CSS.
+Application, payment, and onboarding flow for the Boundless Creator Program. Built with Next.js 14, TypeScript, Tailwind CSS, Stripe, and Kit.
 
-## Features
+## Pages
 
-- **Typeform-style UX**: One question at a time with smooth transitions
-- **Dark theme**: Modern, professional design
-- **Keyboard navigation**: Enter to advance, A/B/C/D or 1/2/3/4 to select
-- **Smart qualification**: Server-side scoring to determine fit
-- **Mobile-first**: Fully responsive design
-- **Google Forms integration**: Optional backup to Google Sheets
-- **Local backup**: All submissions saved to `data/submissions.json`
-- **UTM tracking**: Captures marketing attribution
+| Route | Purpose |
+|-------|---------|
+| `/` | Application form (Typeform-style, one question at a time) |
+| `/checkout?plan=CODE` | Payment page (Stripe Checkout) |
+| `/welcome` | Post-payment confirmation + Kit tagging |
+| `/preview` | **Preview all screens** — see every page without going through the live flow |
 
-## Tech Stack
+### Plan Codes
 
-- Next.js 14 (App Router)
-- TypeScript
-- Tailwind CSS
-- Vercel (deployment)
+| Code | Tier | Price |
+|------|------|-------|
+| `3mo` | 3-month Starter | $3,500 |
+| `3mo-plus` | 3-month + Deep Dive | $6,000 |
+| `6mo` | 6-month Standard | $5,800 |
+| `6mo-plus` | 6-month Premium | $9,600 |
 
-## Getting Started
+## How It Works
 
-### 1. Install Dependencies
+1. **Application** (`/`) — Applicant answers questions, gets scored server-side
+2. **Qualified** → Redirected to Cal.com to book a sales call
+3. **Sales call** → Dave sends payment link from proposal
+4. **Payment** (`/checkout?plan=CODE`) → Stripe Checkout → `/welcome`
+5. **Welcome** → Verifies payment, tags Kit with "BCP Member", shows next steps
+6. **Kit automation** → "BCP Member" tag triggers welcome email with Discord invite
+
+## Integrations
+
+- **Stripe** — Payment processing (one-time + subscription payment plans)
+- **Kit (ConvertKit)** — Subscriber management + tagging (BCP Applicant, BCP Member)
+- **Google Forms** — Application data → Google Sheets
+- **Cal.com** — Scheduling for qualified applicants
+
+## Environment Variables
+
+```
+# Stripe
+STRIPE_SECRET_KEY=sk_live_...
+STRIPE_PUBLISHABLE_KEY=pk_live_...
+
+# Kit
+KIT_API_KEY=kit_...
+KIT_TAG_ID=15754298              # BCP Applicant tag
+KIT_BCP_MEMBER_TAG_ID=8240961   # BCP Member tag (optional, hardcoded fallback)
+
+# Cal.com
+CAL_BOOKING_URL=https://cal.com/davejeltema/bcp-1
+
+# Google Forms (see field IDs in .env.example)
+GOOGLE_FORM_ACTION_URL=https://docs.google.com/forms/d/e/.../formResponse
+GOOGLE_FORM_FIELD_*=entry.XXXXXXXXX
+```
+
+## Development
 
 ```bash
 npm install
-```
-
-### 2. Configure Environment Variables
-
-Copy `.env.example` to `.env.local`:
-
-```bash
 cp .env.example .env.local
-```
-
-Edit `.env.local` with your settings:
-
-- `CAL_BOOKING_URL`: Your Cal.com booking link
-- Google Forms fields (optional, see setup below)
-
-### 3. Run Development Server
-
-```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see the application.
-
-## Google Forms Integration (Optional)
-
-To automatically submit applications to a Google Sheet:
-
-1. Create a Google Form with matching questions
-2. View the form's HTML source (right-click → View Page Source)
-3. Find the form action URL: `<form action="https://docs.google.com/forms/u/0/d/e/[FORM_ID]/formResponse"`
-4. Find field entry IDs: `<input name="entry.123456789"`
-5. Add these to your `.env.local` file
-
-Example:
-```
-GOOGLE_FORM_ACTION_URL=https://docs.google.com/forms/u/0/d/e/1FAIpQLSexample/formResponse
-GOOGLE_FORM_FIELD_FIRST_NAME=entry.123456789
-GOOGLE_FORM_FIELD_EMAIL=entry.987654321
-```
+Open [http://localhost:3000](http://localhost:3000)
 
 ## Qualification Logic
 
-Applicants are scored based on their answers:
-
-- **Active creator = No**: Instant disqualification
-- **Investment ready = No**: Instant disqualification  
-- **Time commitment = Not sure**: Instant disqualification
-- **Duration**: 6+ months = +1 point
-- **Subscribers**: 100+ = +1 point
-- **Goal**: Full-time/business = +1 point
-
-**Qualification threshold**: Score ≥ 3 AND no disqualifications
-
-## Deployment
-
-Deploy to Vercel:
-
-```bash
-vercel
-```
-
-Or connect your GitHub repo to Vercel for automatic deployments.
-
-### Environment Variables in Production
-
-Add all environment variables in the Vercel dashboard under Settings → Environment Variables.
-
-## Project Structure
-
-```
-app/
-├── page.tsx                 # Main application form
-├── layout.tsx              # Root layout with metadata
-├── globals.css             # Global styles and animations
-└── api/
-    └── submit/
-        └── route.ts        # Form submission API
-
-components/
-├── WelcomeScreen.tsx       # Initial welcome screen
-├── QuestionCard.tsx        # Question container
-├── MultipleChoice.tsx      # Multiple choice UI
-├── TextInput.tsx          # Text/URL input fields
-├── ContactForm.tsx        # Contact information form
-├── ProgressBar.tsx        # Top progress indicator
-└── ThankYouScreen.tsx     # Success/rejection screens
-
-lib/
-├── questions.ts           # Question definitions
-└── qualification.ts       # Scoring logic
-
-data/
-└── submissions.json       # Local backup (auto-created)
-```
+- **Disqualifiers**: Not an active creator / Not ready to invest / Not sure about time
+- **Scoring**: Duration 6+ months (+1), Subscribers 100+ (+1), Goal = full-time (+1)
+- **Threshold**: Score ≥ 3 AND no disqualifications
 
 ## Customization
 
-### Colors
+- **Questions**: `lib/questions.ts`
+- **Scoring**: `lib/qualification.ts`
+- **Plan tiers/pricing**: `lib/plans.ts`
+- **Colors**: Tailwind classes (slate-950 bg, blue-600 accent)
 
-Edit `tailwind.config.ts` or update className values:
-- Background: `bg-slate-950`
-- Cards: `bg-slate-900`
-- Accent: `bg-blue-600`
+## Deployment
 
-### Questions
+Hosted on Netlify. Auto-deploys from `main` branch.
 
-Modify `lib/questions.ts` to add/remove/edit questions.
+---
 
-### Qualification Rules
-
-Update scoring logic in `lib/qualification.ts`.
-
-## License
-
-Private - Dave Jeltema / Boundless Creator
+Private — Dave Jeltema / Boundless Creator

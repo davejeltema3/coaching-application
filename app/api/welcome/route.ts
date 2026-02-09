@@ -12,6 +12,18 @@ const KIT_BCP_MEMBER_TAG_ID = '8240961';
 export async function GET(request: NextRequest) {
   try {
     const sessionId = request.nextUrl.searchParams.get('session_id');
+    const testMode = request.nextUrl.searchParams.get('test') === 'true';
+
+    // Test mode — show the welcome page without Stripe verification
+    if (testMode) {
+      return NextResponse.json({
+        success: true,
+        customerName: 'Test User',
+        customerEmail: 'test@example.com',
+        planName: 'test',
+        duration: '3 months',
+      });
+    }
 
     if (!sessionId) {
       return NextResponse.json(
