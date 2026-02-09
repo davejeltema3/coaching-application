@@ -61,24 +61,39 @@ async function subscribeToKit(email: string, firstName: string) {
   
   if (!apiKey) return;
 
-  const payload: any = {
-    email,
-    first_name: firstName,
-  };
-
-  // Add tag if configured
-  if (tagId) {
-    payload.tags = [tagId];
-  }
-
-  await fetch('https://api.kit.com/v4/subscribers', {
+  // Step 1: Create or update the subscriber
+  const subResponse = await fetch('https://api.kit.com/v4/subscribers', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'X-Kit-Api-Key': apiKey,
     },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({
+      email,
+      first_name: firstName,
+    }),
   });
+
+  if (!subResponse.ok) {
+    console.error('Kit subscriber creation failed:', await subResponse.text());
+    return;
+  }
+
+  // Step 2: Tag the subscriber with "BCP Applicant"
+  if (tagId) {
+    const tagResponse = await fetch(`https://api.kit.com/v4/tags/${tagId}/subscribers`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Kit-Api-Key': apiKey,
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    if (!tagResponse.ok) {
+      console.error('Kit tagging failed:', await tagResponse.text());
+    }
+  }
 }
 
 async function submitToGoogleForms(data: FormData) {
