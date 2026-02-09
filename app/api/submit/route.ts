@@ -25,7 +25,13 @@ export async function POST(request: NextRequest) {
     // Subscribe to Kit (ConvertKit) if configured
     if (process.env.KIT_API_KEY && data.email && data.first_name) {
       try {
-        await subscribeToKit(data.email, data.first_name);
+        await subscribeToKit(data.email, data.first_name, {
+          phone: data.phone,
+          channel_url: data.channel_url,
+          challenge: data.challenge,
+          qualified: qualification.qualified,
+          score: qualification.score,
+        });
       } catch (error) {
         console.error('Kit API error:', error);
         // Continue even if Kit fails
@@ -55,13 +61,21 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function subscribeToKit(email: string, firstName: string) {
+interface KitExtraData {
+  phone?: string;
+  channel_url?: string;
+  challenge?: string;
+  qualified?: boolean;
+  score?: number;
+}
+
+async function subscribeToKit(email: string, firstName: string, extra?: KitExtraData) {
   const apiKey = process.env.KIT_API_KEY;
   const tagId = process.env.KIT_TAG_ID;
   
   if (!apiKey) return;
 
-  // Step 1: Create or update the subscriber (Kit V4 uses email_address, not email)
+  // Step 1: Create or update the subscriber with custom fields
   const subResponse = await fetch('https://api.kit.com/v4/subscribers', {
     method: 'POST',
     headers: {
@@ -71,6 +85,11 @@ async function subscribeToKit(email: string, firstName: string) {
     body: JSON.stringify({
       email_address: email,
       first_name: firstName,
+      fields: {
+        ...(extra?.phone ? { phone: extra.phone } : {}),
+        ...(extra?.channel_url ? { youtube_channel: extra.channel_url } : {}),
+        ...(extra?.challenge ? { core_problem: extra.challenge } : {}),
+      },
     }),
   });
 

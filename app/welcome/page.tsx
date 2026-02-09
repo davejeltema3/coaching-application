@@ -167,7 +167,7 @@ export default function WelcomePage() {
                 <div>
                   <div className="text-white font-medium">I&apos;ll reach out personally</div>
                   <div className="text-slate-400 text-sm">
-                    I&apos;ll be in touch within 24 hours to get your onboarding scheduled.
+                    I&apos;ll be in touch to get your onboarding scheduled.
                   </div>
                 </div>
               </li>
