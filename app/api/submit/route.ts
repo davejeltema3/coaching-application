@@ -98,7 +98,7 @@ async function subscribeToKit(email: string, firstName: string, extra?: KitExtra
     return;
   }
 
-  // Step 2: Tag the subscriber with "BCP Applicant"
+  // Step 2: Tag the subscriber with "BCP Applicant" (all applicants)
   if (tagId) {
     const tagResponse = await fetch(`https://api.kit.com/v4/tags/${tagId}/subscribers`, {
       method: 'POST',
@@ -112,6 +112,26 @@ async function subscribeToKit(email: string, firstName: string, extra?: KitExtra
     if (!tagResponse.ok) {
       console.error('Kit tagging failed:', await tagResponse.text());
     }
+  }
+
+  // Step 3: Tag with qualification-specific tag
+  // Qualified → "BCP Applicant Qualified" (triggers booking nudge sequence)
+  // Unqualified → "BCP Applicant Unqualified" (triggers free resources sequence)
+  const qualTagId = extra?.qualified
+    ? (process.env.KIT_TAG_QUALIFIED || '15773880')
+    : (process.env.KIT_TAG_UNQUALIFIED || '15773881');
+
+  const qualTagResponse = await fetch(`https://api.kit.com/v4/tags/${qualTagId}/subscribers`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Kit-Api-Key': apiKey,
+    },
+    body: JSON.stringify({ email_address: email }),
+  });
+
+  if (!qualTagResponse.ok) {
+    console.error('Kit qualification tagging failed:', await qualTagResponse.text());
   }
 }
 
