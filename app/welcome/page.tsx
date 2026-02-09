@@ -19,14 +19,19 @@ export default function WelcomePage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const sessionId = params.get('session_id');
+    const testMode = params.get('test') === 'true';
 
-    if (!sessionId) {
+    if (!sessionId && !testMode) {
       setData({ success: false, error: 'No session found' });
       setLoading(false);
       return;
     }
 
-    fetch(`/api/welcome?session_id=${sessionId}`)
+    const apiUrl = testMode
+      ? '/api/welcome?test=true'
+      : `/api/welcome?session_id=${sessionId}`;
+
+    fetch(apiUrl)
       .then((res) => res.json())
       .then((result) => {
         setData(result);
