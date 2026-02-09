@@ -61,7 +61,7 @@ async function subscribeToKit(email: string, firstName: string) {
   
   if (!apiKey) return;
 
-  // Step 1: Create or update the subscriber
+  // Step 1: Create or update the subscriber (Kit V4 uses email_address, not email)
   const subResponse = await fetch('https://api.kit.com/v4/subscribers', {
     method: 'POST',
     headers: {
@@ -69,7 +69,7 @@ async function subscribeToKit(email: string, firstName: string) {
       'X-Kit-Api-Key': apiKey,
     },
     body: JSON.stringify({
-      email,
+      email_address: email,
       first_name: firstName,
     }),
   });
@@ -87,7 +87,7 @@ async function subscribeToKit(email: string, firstName: string) {
         'Content-Type': 'application/json',
         'X-Kit-Api-Key': apiKey,
       },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ email_address: email }),
     });
 
     if (!tagResponse.ok) {

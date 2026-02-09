@@ -34,36 +34,13 @@ export default function Home() {
     setFormData((prev) => ({ ...prev, ...utmData }));
   }, []);
 
-  // Keyboard navigation
+  // Enter key to advance
   useEffect(() => {
     if (screen !== 'questions') return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      const currentQuestion = questions[currentQuestionIndex];
-
-      // Handle multiple choice keyboard shortcuts
-      if (currentQuestion.type === 'multiple-choice' && currentQuestion.choices) {
-        // Letter keys (A, B, C, D)
-        const letterIndex = e.key.toUpperCase().charCodeAt(0) - 65;
-        if (letterIndex >= 0 && letterIndex < currentQuestion.choices.length) {
-          const choice = currentQuestion.choices[letterIndex];
-          updateFormData(currentQuestion.id, choice.value);
-          setTimeout(() => handleNext(), 300);
-          return;
-        }
-
-        // Number keys (1, 2, 3, 4)
-        const numberIndex = parseInt(e.key) - 1;
-        if (numberIndex >= 0 && numberIndex < currentQuestion.choices.length) {
-          const choice = currentQuestion.choices[numberIndex];
-          updateFormData(currentQuestion.id, choice.value);
-          setTimeout(() => handleNext(), 300);
-          return;
-        }
-      }
-
-      // Enter key to advance (if answer is provided)
       if (e.key === 'Enter' && !e.shiftKey) {
+        const currentQuestion = questions[currentQuestionIndex];
         const currentAnswer = formData[currentQuestion.id as keyof FormData];
         if (currentAnswer) {
           handleNext();

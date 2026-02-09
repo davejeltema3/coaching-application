@@ -43,9 +43,10 @@ export const questions: Question[] = [
     type: 'multiple-choice',
     question: 'How many subscribers do you have?',
     choices: [
-      { text: '0-99', value: '0-99', score: 0 },
-      { text: '100-1,000', value: '100-1k', score: 1 },
-      { text: '1,001-5,000', value: '1k-5k', score: 1 },
+      { text: "I haven't started yet", value: 'none', score: 0 },
+      { text: "None yet, but I have an audience on another platform", value: 'other-platform', score: 1 },
+      { text: 'Under 500', value: '<500', score: 1 },
+      { text: '500 - 5,000', value: '500-5k', score: 1 },
       { text: '5,000+', value: '5k+', score: 1 },
     ],
   },
@@ -89,7 +90,7 @@ export const questions: Question[] = [
     id: 'time_commitment',
     type: 'multiple-choice',
     question: 'Are you ready to commit the time?',
-    subtext: 'This program requires dedicating 5-10+ hours per week to your channel.',
+    subtext: 'This program requires dedicating 10-20 hours per week to your channel.',
     choices: [
       { text: "Yes, I'm all in", value: 'yes', score: 1 },
       {
