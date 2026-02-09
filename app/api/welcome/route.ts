@@ -3,7 +3,7 @@ import Stripe from 'stripe';
 
 function getStripe() {
   return new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: '2025-01-27.acacia' as Stripe.LatestApiVersion,
+    apiVersion: '2026-01-28.clover' as Stripe.LatestApiVersion,
   });
 }
 
