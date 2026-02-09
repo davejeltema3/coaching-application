@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       qualified: qualification.qualified,
       score: qualification.score,
-      calBookingUrl: process.env.CAL_BOOKING_URL || 'https://cal.com/davejeltema/coaching-call',
+      calBookingUrl: process.env.CAL_BOOKING_URL || 'https://cal.com/davejeltema/bcp-1',
     });
   } catch (error) {
     console.error('Submission error:', error);
