@@ -249,7 +249,7 @@ export default function CheckoutPage() {
           </p>
         </div>
 
-        <div className="mt-4 text-center text-slate-600 text-xs">
+        <div className="mt-4 mb-8 text-center text-slate-600 text-xs">
           Questions?{' '}
           <a
             href="mailto:hello@boundlesscreator.com"
