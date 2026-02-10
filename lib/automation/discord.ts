@@ -1,5 +1,5 @@
 const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
-const DISCORD_WELCOME_CHANNEL_ID = '1469126752919097479'; // #welcome in Boundless Creator server
+const DISCORD_WELCOME_CHANNEL_ID = '1470652218825019442'; // #general in BCP server (1470652210038968466)
 
 export async function createDiscordInvite(): Promise<string | null> {
   if (!DISCORD_BOT_TOKEN) {

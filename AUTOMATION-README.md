@@ -25,31 +25,43 @@ Add these to Vercel project settings:
 KIT_API_KEY=your_kit_v4_api_key
 DISCORD_BOT_TOKEN=your_discord_bot_token_here
 OPENCLAW_WHATSAPP_WEBHOOK=https://hazel.tail8491d6.ts.net/api/whatsapp-relay
-CRON_SECRET=generate_a_random_string_here
+CRON_SECRET=1337
+DISCORD_CHANNEL_ID=your_bcp_server_channel_id
 ```
+
+**Important:** Update `lib/automation/discord.ts` line 2 with your BCP server's channel ID where you want invites generated from (typically #general or #welcome).
 
 ### 2. OpenClaw WhatsApp Relay
 
-Create an API endpoint in OpenClaw that:
-- Accepts POST with `{phone, message}`
-- Calls the WhatsApp message tool
-- Returns 200 OK
+Run the setup script on the VPS:
 
-Example minimal handler (add to OpenClaw):
-```javascript
-// POST /api/whatsapp-relay
-const { phone, message } = req.body;
-await messageTool({ action: 'send', channel: 'whatsapp', target: phone, message });
-res.status(200).json({ sent: true });
+```bash
+cd /home/hazel/.openclaw/workspace
+bash scripts/setup-whatsapp-relay.sh
+```
+
+This creates a systemd service that:
+- Listens on port 18791
+- Receives POST `{phone, message}`
+- Sends via `openclaw message send` CLI
+- Exposed via Tailscale Serve at `/api/whatsapp-relay`
+
+**Control the service:**
+```bash
+sudo systemctl status whatsapp-relay   # Check status
+sudo systemctl restart whatsapp-relay  # Restart
+sudo journalctl -u whatsapp-relay -f   # View logs
 ```
 
 ### 3. Cal.com Webhook
 
-1. Go to Cal.com → Settings → Webhooks
+1. Go to Cal.com → Settings → Webhooks  
 2. Add new webhook:
    - URL: `https://apply.boundlesscreator.com/api/automation/cal-webhook`
    - Trigger: Booking Created
    - Save
+
+**Note:** This webhook fires for ALL bookings on your Cal.com account, not just BCP applicants. That's fine - the code checks if the email exists in Kit before applying the "BCP Call Booked" tag. Non-BCP bookings will be safely ignored (no subscriber found = no tag applied).
 
 ### 4. Deploy
 
@@ -63,13 +75,29 @@ Vercel auto-deploys. Cron starts running immediately.
 
 ## Cron Schedule
 
-**Vercel Hobby Plan:** Max 1 cron/day
-**Vercel Pro ($20/mo):** Unlimited crons
+**Vercel Free Plan:** No built-in crons
+**Solution:** Use [cron-job.org](https://cron-job.org) (free) to ping the endpoint every 5 minutes
 
-If you're on Hobby, use [cron-job.org](https://cron-job.org) (free) to ping the endpoint every 5 minutes:
+**Setup on cron-job.org:**
+1. Create account (free)
+2. New cron job:
+   - **Title:** Kit Cron
+   - **URL:** `https://apply.boundlesscreator.com/api/automation/kit`
+   - **Schedule:** Every 5 minutes
+   - **Advanced → Request Headers:**
+     - Key: `Authorization`
+     - Value: `Bearer 1337` (your CRON_SECRET)
+3. Save and enable
 
-URL: `https://apply.boundlesscreator.com/api/automation/kit`
-Header: `Authorization: Bearer YOUR_CRON_SECRET`
+**To temporarily disable automation:**
+- Pause the cron job on cron-job.org (big pause button)
+- Re-enable when ready to test/launch
+
+**To test manually:**
+```bash
+curl -H "Authorization: Bearer 1337" \
+  https://apply.boundlesscreator.com/api/automation/kit
+```
 
 ## What Gets Automated
 
@@ -130,16 +158,20 @@ Expected response:
 
 **Before (OpenClaw crons):**
 - Applicant monitor: ~$0.20/day (Flash-Lite, 288 runs)
-- Member monitor: ~$0.20/day
+- Member monitor: ~$0.20/day  
 - Orchestrator: ~$2/day (Gemini 2.0 Flash, thinking overhead)
 - **Total: ~$2.40/day = $72/month**
 
-**After (Vercel + WhatsApp relay):**
-- Vercel crons: $0 (just API calls)
-- WhatsApp relay: ~$0.05/day (only when actually sending)
+**After (Vercel Free + cron-job.org + WhatsApp relay):**
+- Vercel hosting: $0 (free tier)
+- cron-job.org: $0 (free tier, pings Vercel every 5 min)
+- Automation logic: $0 (just API calls, no LLM)
+- WhatsApp relay: ~$0.05/day (only when actually sending, minimal tokens)
 - **Total: ~$1.50/month**
 
 Saves ~$70/month in token costs.
+
+**Note:** Vercel Free plan doesn't support built-in crons, but cron-job.org is free and works perfectly.
 
 ## Troubleshooting
 
