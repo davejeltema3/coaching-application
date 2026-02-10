@@ -31,10 +31,6 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={inter.className}>
         {children}
-        <footer className="fixed bottom-4 left-0 right-0 text-center text-slate-500 text-xs space-y-1">
-          <div>Powered by Boundless Creator</div>
-          <div className="text-slate-600">Your info stays private. No spam, no selling your data.</div>
-        </footer>
       </body>
     </html>
   );
