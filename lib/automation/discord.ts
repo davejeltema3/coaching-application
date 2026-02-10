@@ -1,5 +1,5 @@
 const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
-const DISCORD_WELCOME_CHANNEL_ID = '1470652218825019442'; // #general in BCP server (1470652210038968466)
+const DISCORD_WELCOME_CHANNEL_ID = '1470652213092290623'; // #start-here in BCP server
 
 export async function createDiscordInvite(): Promise<string | null> {
   if (!DISCORD_BOT_TOKEN) {
