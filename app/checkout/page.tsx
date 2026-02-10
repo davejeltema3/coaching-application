@@ -249,14 +249,19 @@ export default function CheckoutPage() {
           </p>
         </div>
 
-        <div className="mt-4 mb-8 text-center text-slate-600 text-xs">
-          Questions?{' '}
-          <a
-            href="mailto:hello@boundlesscreator.com"
-            className="text-slate-500 hover:text-slate-400 underline"
-          >
-            hello@boundlesscreator.com
-          </a>
+        <div className="mt-4 mb-8 text-center space-y-2">
+          <p className="text-slate-500 text-xs">
+            Your info stays private. No spam, no selling your data.
+          </p>
+          <p className="text-slate-600 text-xs">
+            Questions?{' '}
+            <a
+              href="mailto:hello@boundlesscreator.com"
+              className="text-slate-500 hover:text-slate-400 underline"
+            >
+              hello@boundlesscreator.com
+            </a>
+          </p>
         </div>
       </div>
     </div>

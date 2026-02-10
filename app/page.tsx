@@ -344,6 +344,10 @@ export default function Home() {
             </QuestionCard>
           )}
         </div>
+        
+        <div className="mt-8 text-center text-slate-500 text-xs">
+          Your info stays private. No spam, no selling your data.
+        </div>
       </div>
     </>
   );
