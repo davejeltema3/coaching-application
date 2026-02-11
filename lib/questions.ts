@@ -21,7 +21,7 @@ export const questions: Question[] = [
   {
     id: 'active_creator',
     type: 'multiple-choice',
-    question: 'Are you an active YouTube creator?',
+    question: 'Are you an active educational YouTube creator?',
     choices: [
       { text: 'Yes', value: 'yes', score: 0 },
       { text: 'No', value: 'no', score: 0, disqualifies: true },

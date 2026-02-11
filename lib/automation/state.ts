@@ -1,7 +1,10 @@
 import fs from 'fs/promises';
 import path from 'path';
 
-const STATE_FILE = path.join(process.cwd(), 'data', 'automation-state.json');
+// Use /tmp on Vercel (writable), fallback to local data/ for dev
+const STATE_FILE = process.env.VERCEL 
+  ? '/tmp/automation-state.json'
+  : path.join(process.cwd(), 'data', 'automation-state.json');
 
 interface AutomationState {
   processedApplicants: string[];
