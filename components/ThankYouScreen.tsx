@@ -90,16 +90,13 @@ export default function ThankYouScreen({
         )}
         <div className="bg-slate-900 border border-slate-800 rounded-lg p-8 md:p-12 shadow-xl">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Thanks for your interest!
+            Thanks for applying!
           </h1>
           <p className="text-lg text-slate-300 mb-6 leading-relaxed">
-            Based on your answers, the BCP might not be the best fit
-            right now — and I&apos;d rather be honest about that than take your
-            money.
+            I&apos;ll review your application and reach out if you qualify for the program.
           </p>
           <p className="text-lg text-slate-300 mb-8 leading-relaxed">
-            Here are some free resources that can help you get to the next
-            level:
+            In the meantime, here are some free resources that can help:
           </p>
           <div className="space-y-4 mb-8">
             <a
@@ -120,7 +117,7 @@ export default function ThankYouScreen({
             </a>
           </div>
           <p className="text-slate-400">
-            Keep creating — I hope I can work with you in the future!
+            Talk soon!
           </p>
         </div>
       </div>
