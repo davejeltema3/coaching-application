@@ -9,13 +9,26 @@ export async function POST(request: NextRequest) {
   try {
     const payload = await request.json();
     
-    // Cal.com sends booking data - extract email from attendees
-    const attendees = payload.attendees || payload.responses?.attendees || [];
-    const email = attendees[0]?.email || payload.responses?.email;
+    // Log the full payload to debug
+    console.log('Cal.com webhook payload:', JSON.stringify(payload, null, 2));
+    
+    // Cal.com sends booking data - try multiple paths
+    let email = null;
+    
+    // Try different payload structures
+    if (payload.attendees && payload.attendees.length > 0) {
+      email = payload.attendees[0].email;
+    } else if (payload.responses?.email) {
+      email = payload.responses.email;
+    } else if (payload.payload?.attendees && payload.payload.attendees.length > 0) {
+      email = payload.payload.attendees[0].email;
+    } else if (payload.payload?.responses?.email) {
+      email = payload.payload.responses.email;
+    }
     
     if (!email) {
-      console.error('No email found in Cal.com webhook payload');
-      return NextResponse.json({ error: 'No email' }, { status: 400 });
+      console.error('No email found in Cal.com webhook payload. Full payload:', payload);
+      return NextResponse.json({ error: 'No email', payload }, { status: 400 });
     }
 
     console.log('Cal.com booking received for:', email);
