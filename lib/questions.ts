@@ -150,7 +150,7 @@ export const questions: Question[] = [
     type: 'url',
     question: 'Link to your YouTube channel',
     required: true,
-    placeholder: 'https://youtube.com/@yourchannel',
+    placeholder: 'https://www.youtube.com/@yourchannel',
   },
 ];
 
