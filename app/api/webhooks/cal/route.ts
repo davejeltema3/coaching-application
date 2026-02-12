@@ -1,75 +1,92 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { google } from 'googleapis';
 
-// Cal.com webhook — fires when someone books a call
-// Tags them "BCP Call Booked" in Kit, which stops the qualified nurture sequence
-
-const KIT_CALL_BOOKED_TAG = process.env.KIT_TAG_CALL_BOOKED || '15773882';
+const SHEET_ID = process.env.GOOGLE_SHEET_ID;
+const SERVICE_ACCOUNT_EMAIL = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+const PRIVATE_KEY = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY?.replace(/\\n/g, '\n');
 
 export async function POST(request: NextRequest) {
   try {
     const payload = await request.json();
-
-    // Cal.com sends different event types — we only care about BOOKING_CREATED
-    const eventType = payload.triggerEvent;
-    if (eventType !== 'BOOKING_CREATED') {
-      return NextResponse.json({ ok: true, skipped: true, reason: eventType });
+    
+    // Cal.com sends booking data - extract email from attendees
+    const attendees = payload.attendees || payload.responses?.attendees || [];
+    const email = attendees[0]?.email || payload.responses?.email;
+    
+    if (!email) {
+      console.error('No email found in Cal.com webhook payload');
+      return NextResponse.json({ error: 'No email' }, { status: 400 });
     }
 
-    // Extract attendee email from the booking
-    const attendees = payload.payload?.attendees || [];
-    if (attendees.length === 0) {
-      return NextResponse.json({ ok: true, skipped: true, reason: 'no attendees' });
+    console.log('Cal.com booking received for:', email);
+
+    if (!SHEET_ID || !SERVICE_ACCOUNT_EMAIL || !PRIVATE_KEY) {
+      console.error('Google Sheets credentials not configured');
+      return NextResponse.json({ error: 'Server not configured' }, { status: 500 });
     }
 
-    const apiKey = process.env.KIT_API_KEY;
-    if (!apiKey) {
-      console.error('Cal webhook: KIT_API_KEY not configured');
-      return NextResponse.json({ error: 'Kit not configured' }, { status: 500 });
+    // Authenticate with Google Sheets
+    const auth = new google.auth.GoogleAuth({
+      credentials: {
+        client_email: SERVICE_ACCOUNT_EMAIL,
+        private_key: PRIVATE_KEY,
+      },
+      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+    });
+
+    const sheets = google.sheets({ version: 'v4', auth });
+
+    // Get all rows from the sheet
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range: 'Form Responses 1!A:Z', // Get all columns
+    });
+
+    const rows = response.data.values || [];
+    
+    // Find column indices from header row
+    const headers = rows[0] || [];
+    const emailColumnIndex = headers.indexOf('Email');
+    const callBookedColumnIndex = headers.indexOf('Call Booked');
+    
+    if (emailColumnIndex === -1 || callBookedColumnIndex === -1) {
+      console.error('Required columns not found in sheet');
+      return NextResponse.json({ error: 'Sheet columns not found' }, { status: 500 });
     }
-
-    // Tag each attendee as "BCP Call Booked"
-    for (const attendee of attendees) {
-      const email = attendee.email;
-      const name = attendee.name;
-
-      if (!email) continue;
-
-      console.log(`Cal webhook: Tagging ${email} (${name}) as BCP Call Booked`);
-
-      // Ensure subscriber exists
-      await fetch('https://api.kit.com/v4/subscribers', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Kit-Api-Key': apiKey,
-        },
-        body: JSON.stringify({
-          email_address: email,
-          ...(name ? { first_name: name.split(' ')[0] } : {}),
-        }),
-      });
-
-      // Tag with "BCP Call Booked"
-      const tagResponse = await fetch(
-        `https://api.kit.com/v4/tags/${KIT_CALL_BOOKED_TAG}/subscribers`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Kit-Api-Key': apiKey,
-          },
-          body: JSON.stringify({ email_address: email }),
-        }
-      );
-
-      if (!tagResponse.ok) {
-        console.error(`Cal webhook: Kit tagging failed for ${email}:`, await tagResponse.text());
+    
+    // Find the row with matching email
+    let rowIndex = -1;
+    for (let i = 1; i < rows.length; i++) { // Start at 1 to skip header
+      if (rows[i][emailColumnIndex]?.toLowerCase() === email.toLowerCase()) {
+        rowIndex = i;
+        break;
       }
     }
 
-    return NextResponse.json({ ok: true, tagged: attendees.length });
+    if (rowIndex === -1) {
+      console.error('Email not found in sheet:', email);
+      return NextResponse.json({ error: 'Email not found' }, { status: 404 });
+    }
+
+    // Convert column index to letter (0=A, 1=B, etc.)
+    const columnLetter = String.fromCharCode(65 + callBookedColumnIndex);
+    const cellRange = `Form Responses 1!${columnLetter}${rowIndex + 1}`;
+    
+    // Update the "Call Booked" cell to ✓
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SHEET_ID,
+      range: cellRange,
+      valueInputOption: 'RAW',
+      requestBody: {
+        values: [['✓']],
+      },
+    });
+
+    console.log(`Updated row ${rowIndex + 1} - Call Booked = ✓ for ${email}`);
+
+    return NextResponse.json({ success: true, email, row: rowIndex + 1 });
   } catch (error) {
-    console.error('Cal webhook error:', error);
-    return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 });
+    console.error('Cal.com webhook error:', error);
+    return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }
