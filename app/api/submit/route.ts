@@ -163,6 +163,7 @@ async function submitToGoogleForms(data: FormData) {
     subscribers: process.env.GOOGLE_FORM_FIELD_SUBSCRIBERS,
     monetized: process.env.GOOGLE_FORM_FIELD_MONETIZED,
     content_type: process.env.GOOGLE_FORM_FIELD_CONTENT_TYPE,
+    target_audience: process.env.GOOGLE_FORM_FIELD_TARGET_AUDIENCE,
     goal: process.env.GOOGLE_FORM_FIELD_GOAL,
     program_goals: process.env.GOOGLE_FORM_FIELD_PROGRAM_GOALS,
     upload_schedule: process.env.GOOGLE_FORM_FIELD_UPLOAD_SCHEDULE,
