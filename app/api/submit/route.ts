@@ -9,8 +9,8 @@ export async function POST(request: NextRequest) {
   try {
     const data: FormData = await request.json();
 
-    // Calculate qualification server-side
-    const qualification = calculateQualification(data);
+    // Calculate qualification server-side (now includes YouTube channel verification)
+    const qualification = await calculateQualification(data);
 
     // Submit to Google Forms if configured
     if (process.env.GOOGLE_FORM_ACTION_URL) {

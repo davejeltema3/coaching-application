@@ -1,13 +1,15 @@
 import { FormData, questions } from './questions';
+import { verifyChannel, VerifyResult } from './youtube-verify';
 
 export interface QualificationResult {
   qualified: boolean;
   score: number;
   disqualified: boolean;
   disqualifyReason?: string;
+  channelVerified?: VerifyResult;
 }
 
-export function calculateQualification(data: FormData): QualificationResult {
+export async function calculateQualification(data: FormData): Promise<QualificationResult> {
   let score = 0;
   let disqualified = false;
   let disqualifyReason: string | undefined;
@@ -37,12 +39,30 @@ export function calculateQualification(data: FormData): QualificationResult {
 
   // Qualification criteria: score >= 3 AND not disqualified
   // Scoring is generous — we'd rather talk to someone borderline than miss a good fit
-  const qualified = score >= 3 && !disqualified;
+  let qualified = score >= 3 && !disqualified;
+  let channelVerified: VerifyResult | undefined;
+
+  // If questionnaire passes, verify YouTube channel
+  if (qualified && data.channel_url) {
+    try {
+      const hasOtherPlatform = data.subscribers === 'other-platform';
+      channelVerified = await verifyChannel(data.channel_url, hasOtherPlatform);
+      
+      if (!channelVerified.verified) {
+        qualified = false;
+        disqualifyReason = 'channel_verification';
+      }
+    } catch (err) {
+      console.error('Channel verification failed:', err);
+      // Don't block on verification errors - verifyChannel already handles this
+    }
+  }
 
   return {
     qualified,
     score,
     disqualified,
     disqualifyReason,
+    channelVerified,
   };
 }
