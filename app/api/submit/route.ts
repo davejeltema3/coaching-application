@@ -185,6 +185,9 @@ async function submitToGoogleForms(data: FormData, qualification: { qualified: b
   if (process.env.GOOGLE_FORM_FIELD_SCORE) {
     formData.append(process.env.GOOGLE_FORM_FIELD_SCORE, qualification.score.toString());
   }
+  if (process.env.GOOGLE_FORM_FIELD_CALL_BOOKED) {
+    formData.append(process.env.GOOGLE_FORM_FIELD_CALL_BOOKED, 'No');
+  }
 
   // Submit to Google Forms
   await fetch(formUrl, {
