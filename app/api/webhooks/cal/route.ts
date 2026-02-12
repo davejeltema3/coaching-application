@@ -7,10 +7,15 @@ const PRIVATE_KEY = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY?.replace(/\\n
 
 export async function POST(request: NextRequest) {
   try {
-    const payload = await request.json();
+    const rawBody = await request.text();
+    console.log('=== RAW WEBHOOK BODY ===');
+    console.log(rawBody);
+    console.log('=== END RAW BODY ===');
     
-    // Log the full payload to debug
-    console.log('Cal.com webhook payload:', JSON.stringify(payload, null, 2));
+    const payload = JSON.parse(rawBody);
+    console.log('=== PARSED PAYLOAD ===');
+    console.log(JSON.stringify(payload, null, 2));
+    console.log('=== END PARSED ===');
     
     // Cal.com sends booking data - try multiple paths
     let email = null;
