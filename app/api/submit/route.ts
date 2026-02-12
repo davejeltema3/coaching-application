@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     // Submit to Google Forms if configured
     if (process.env.GOOGLE_FORM_ACTION_URL) {
       try {
-        await submitToGoogleForms(data);
+        await submitToGoogleForms(data, qualification);
       } catch (error) {
         console.error('Google Forms submission error:', error);
         // Continue even if Google Forms fails
@@ -144,7 +144,7 @@ async function subscribeToKit(email: string, firstName: string, extra?: KitExtra
   }
 }
 
-async function submitToGoogleForms(data: FormData) {
+async function submitToGoogleForms(data: FormData, qualification: { qualified: boolean; score: number }) {
   const formUrl = process.env.GOOGLE_FORM_ACTION_URL;
   if (!formUrl) return;
 
@@ -177,6 +177,14 @@ async function submitToGoogleForms(data: FormData) {
       formData.append(entryId, value);
     }
   });
+
+  // Add qualification results
+  if (process.env.GOOGLE_FORM_FIELD_QUALIFIED) {
+    formData.append(process.env.GOOGLE_FORM_FIELD_QUALIFIED, qualification.qualified ? 'Yes' : 'No');
+  }
+  if (process.env.GOOGLE_FORM_FIELD_SCORE) {
+    formData.append(process.env.GOOGLE_FORM_FIELD_SCORE, qualification.score.toString());
+  }
 
   // Submit to Google Forms
   await fetch(formUrl, {
