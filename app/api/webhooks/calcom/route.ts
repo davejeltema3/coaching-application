@@ -90,10 +90,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Sheet columns not found' }, { status: 200 });
     }
     
+    // Debug: Log all emails in sheet
+    console.log('Looking for email:', email);
+    console.log('Emails in sheet:', rows.slice(1).map(r => r[emailColumnIndex]).filter(Boolean));
+    
     // Find the row with matching email
     let rowIndex = -1;
     for (let i = 1; i < rows.length; i++) { // Start at 1 to skip header
-      if (rows[i][emailColumnIndex]?.toLowerCase() === email.toLowerCase()) {
+      const sheetEmail = rows[i][emailColumnIndex]?.trim().toLowerCase();
+      const searchEmail = email.trim().toLowerCase();
+      
+      console.log(`Comparing row ${i}: "${sheetEmail}" vs "${searchEmail}"`);
+      
+      if (sheetEmail === searchEmail) {
         rowIndex = i;
         break;
       }
