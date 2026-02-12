@@ -3,7 +3,16 @@ import { google } from 'googleapis';
 
 const SHEET_ID = process.env.GOOGLE_SHEET_ID;
 const SERVICE_ACCOUNT_EMAIL = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-const PRIVATE_KEY = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY?.replace(/\\n/g, '\n');
+
+// Handle both escaped and literal newlines
+let PRIVATE_KEY = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY || '';
+if (PRIVATE_KEY.includes('\\n')) {
+  PRIVATE_KEY = PRIVATE_KEY.replace(/\\n/g, '\n');
+}
+
+// Debug: Log key format (first 50 chars only for security)
+console.log('Private key starts with:', PRIVATE_KEY.substring(0, 50));
+console.log('Private key ends with:', PRIVATE_KEY.substring(PRIVATE_KEY.length - 50));
 
 export async function POST(request: NextRequest) {
   try {
