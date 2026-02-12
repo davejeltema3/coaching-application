@@ -44,10 +44,10 @@ export default function ThankYouScreen({
               </div>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              You&apos;re in!
+              Thanks for applying!
             </h1>
             <p className="text-lg text-slate-300 mb-8 leading-relaxed">
-              Your application looks great. I&apos;ll review your channel and reach out within 24 hours with next steps.
+              I&apos;ll review your application and channel. If you&apos;re a good fit, you&apos;ll hear from me soon.
             </p>
             <p className="text-sm text-slate-400">
               Or reach out directly at{' '}
