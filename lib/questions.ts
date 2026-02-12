@@ -56,9 +56,9 @@ export const questions: Question[] = [
     question: 'Are you monetized on YouTube yet?',
     subtext: "This just helps me understand where you're at. Not a dealbreaker either way.",
     choices: [
-      { text: 'Yes, I'm in the Partner Program', value: 'yes', score: 1 },
+      { text: "Yes, I'm in the Partner Program", value: 'yes', score: 1 },
       { text: 'Not yet, but working toward it', value: 'not-yet', score: 0 },
-      { text: 'No, and I'm not sure how', value: 'no', score: 0 },
+      { text: "No, and I'm not sure how", value: 'no', score: 0 },
     ],
   },
   {
