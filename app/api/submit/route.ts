@@ -181,13 +181,25 @@ async function submitToGoogleForms(data: FormData, qualification: { qualified: b
 
   // Add qualification results
   if (process.env.GOOGLE_FORM_FIELD_QUALIFIED) {
-    formData.append(process.env.GOOGLE_FORM_FIELD_QUALIFIED, qualification.qualified ? 'Yes' : 'No');
+    formData.append(process.env.GOOGLE_FORM_FIELD_QUALIFIED, qualification.qualified ? '✓' : '✗');
   }
   if (process.env.GOOGLE_FORM_FIELD_SCORE) {
     formData.append(process.env.GOOGLE_FORM_FIELD_SCORE, qualification.score.toString());
   }
   if (process.env.GOOGLE_FORM_FIELD_CALL_BOOKED) {
-    formData.append(process.env.GOOGLE_FORM_FIELD_CALL_BOOKED, 'No');
+    formData.append(process.env.GOOGLE_FORM_FIELD_CALL_BOOKED, ''); // Blank until Cal.com webhook
+  }
+  if (process.env.GOOGLE_FORM_FIELD_OUTREACH_SENT) {
+    formData.append(process.env.GOOGLE_FORM_FIELD_OUTREACH_SENT, ''); // Blank, Dave updates manually
+  }
+  if (process.env.GOOGLE_FORM_FIELD_STATUS) {
+    formData.append(process.env.GOOGLE_FORM_FIELD_STATUS, 'Applied');
+  }
+  if (process.env.GOOGLE_FORM_FIELD_PURCHASE_STATUS) {
+    formData.append(process.env.GOOGLE_FORM_FIELD_PURCHASE_STATUS, ''); // Blank until payment
+  }
+  if (process.env.GOOGLE_FORM_FIELD_NOTES) {
+    formData.append(process.env.GOOGLE_FORM_FIELD_NOTES, '');
   }
 
   // Submit to Google Forms
