@@ -29,6 +29,8 @@ export async function POST(request: NextRequest) {
           phone: data.phone,
           channel_url: data.channel_url,
           challenge: data.challenge,
+          content_type: data.content_type,
+          program_goals: data.program_goals,
           qualified: qualification.qualified,
           score: qualification.score,
         });
@@ -65,6 +67,8 @@ interface KitExtraData {
   phone?: string;
   channel_url?: string;
   challenge?: string;
+  content_type?: string;
+  program_goals?: string;
   qualified?: boolean;
   score?: number;
 }
@@ -89,6 +93,8 @@ async function subscribeToKit(email: string, firstName: string, extra?: KitExtra
         ...(extra?.phone ? { phone: extra.phone } : {}),
         ...(extra?.channel_url ? { youtube_channel: extra.channel_url } : {}),
         ...(extra?.challenge ? { core_problem: extra.challenge } : {}),
+        ...(extra?.content_type ? { content_type: extra.content_type } : {}),
+        ...(extra?.program_goals ? { program_goals: extra.program_goals } : {}),
       },
     }),
   });
@@ -152,9 +158,12 @@ async function submitToGoogleForms(data: FormData) {
     active_creator: process.env.GOOGLE_FORM_FIELD_ACTIVE_CREATOR,
     duration: process.env.GOOGLE_FORM_FIELD_DURATION,
     subscribers: process.env.GOOGLE_FORM_FIELD_SUBSCRIBERS,
+    monetized: process.env.GOOGLE_FORM_FIELD_MONETIZED,
+    content_type: process.env.GOOGLE_FORM_FIELD_CONTENT_TYPE,
     goal: process.env.GOOGLE_FORM_FIELD_GOAL,
+    program_goals: process.env.GOOGLE_FORM_FIELD_PROGRAM_GOALS,
+    upload_schedule: process.env.GOOGLE_FORM_FIELD_UPLOAD_SCHEDULE,
     investment_ready: process.env.GOOGLE_FORM_FIELD_INVESTMENT_READY,
-    time_commitment: process.env.GOOGLE_FORM_FIELD_TIME_COMMITMENT,
   };
 
   // Add each field to form data

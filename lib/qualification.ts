@@ -36,6 +36,7 @@ export function calculateQualification(data: FormData): QualificationResult {
   }
 
   // Qualification criteria: score >= 3 AND not disqualified
+  // Scoring is generous — we'd rather talk to someone borderline than miss a good fit
   const qualified = score >= 3 && !disqualified;
 
   return {

@@ -51,6 +51,25 @@ export const questions: Question[] = [
     ],
   },
   {
+    id: 'monetized',
+    type: 'multiple-choice',
+    question: 'Are you monetized on YouTube yet?',
+    subtext: "This just helps me understand where you're at. Not a dealbreaker either way.",
+    choices: [
+      { text: 'Yes, I'm in the Partner Program', value: 'yes', score: 1 },
+      { text: 'Not yet, but working toward it', value: 'not-yet', score: 0 },
+      { text: 'No, and I'm not sure how', value: 'no', score: 0 },
+    ],
+  },
+  {
+    id: 'content_type',
+    type: 'text',
+    question: 'What kind of content do you create?',
+    subtext: 'Your niche, topics, style of videos. Help me get a feel for your channel before we talk.',
+    required: true,
+    placeholder: 'e.g. I teach guitar for beginners, mostly 10-15 minute tutorials...',
+  },
+  {
     id: 'goal',
     type: 'multiple-choice',
     question: 'What is your primary goal with YouTube?',
@@ -61,10 +80,34 @@ export const questions: Question[] = [
         score: 1,
       },
       {
+        text: 'Grow it into a meaningful side income',
+        value: 'side-income',
+        score: 1,
+      },
+      {
         text: "It's more of a hobby or side project",
         value: 'hobby',
         score: 0,
       },
+    ],
+  },
+  {
+    id: 'program_goals',
+    type: 'text',
+    question: 'What are you hoping to get out of this program?',
+    subtext: 'Be honest. There are no wrong answers here.',
+    required: true,
+    placeholder: 'e.g. I want help figuring out why my videos aren\'t getting views, or I need a content strategy that actually works...',
+  },
+  {
+    id: 'upload_schedule',
+    type: 'multiple-choice',
+    question: 'What does your current upload schedule look like?',
+    choices: [
+      { text: 'Multiple times a week', value: 'multiple-weekly', score: 1 },
+      { text: 'About once a week', value: 'weekly', score: 1 },
+      { text: 'A few times a month', value: 'few-monthly', score: 1 },
+      { text: 'Inconsistent or on pause', value: 'inconsistent', score: 0 },
     ],
   },
   {
@@ -87,25 +130,10 @@ export const questions: Question[] = [
     ],
   },
   {
-    id: 'time_commitment',
-    type: 'multiple-choice',
-    question: 'Are you ready to commit the time?',
-    subtext: 'This program requires dedicating 10-20 hours per week to your channel.',
-    choices: [
-      { text: "Yes, I'm all in", value: 'yes', score: 1 },
-      {
-        text: "I'm not sure I have the time",
-        value: 'unsure',
-        score: 0,
-        disqualifies: true,
-      },
-    ],
-  },
-  {
     id: 'challenge',
     type: 'text',
     question: "What's the #1 biggest challenge you're facing with your YouTube channel right now?",
-    subtext: 'Be as specific as possible — this helps me understand your situation before our call.',
+    subtext: 'Be as specific as possible. This helps me understand your situation before our call.',
     required: true,
     placeholder: 'Type your answer here...',
   },
@@ -122,9 +150,12 @@ export interface FormData {
   active_creator?: string;
   duration?: string;
   subscribers?: string;
+  monetized?: string;
+  content_type?: string;
   goal?: string;
+  program_goals?: string;
+  upload_schedule?: string;
   investment_ready?: string;
-  time_commitment?: string;
   challenge?: string;
   channel_url?: string;
   first_name?: string;
