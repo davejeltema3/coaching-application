@@ -17,6 +17,12 @@ export async function POST(request: NextRequest) {
     console.log(JSON.stringify(payload, null, 2));
     console.log('=== END PARSED ===');
     
+    // Handle Cal.com ping test
+    if (payload.triggerEvent === 'PING' || payload.test === true) {
+      console.log('Cal.com ping test received');
+      return NextResponse.json({ success: true, message: 'Ping received' });
+    }
+    
     // Cal.com sends booking data - try multiple paths
     let email = null;
     
@@ -33,14 +39,16 @@ export async function POST(request: NextRequest) {
     
     if (!email) {
       console.error('No email found in Cal.com webhook payload. Full payload:', payload);
-      return NextResponse.json({ error: 'No email', payload }, { status: 400 });
+      // Still return 200 to avoid failing Cal.com's webhook validation
+      return NextResponse.json({ error: 'No email', payload }, { status: 200 });
     }
 
     console.log('Cal.com booking received for:', email);
 
     if (!SHEET_ID || !SERVICE_ACCOUNT_EMAIL || !PRIVATE_KEY) {
       console.error('Google Sheets credentials not configured');
-      return NextResponse.json({ error: 'Server not configured' }, { status: 500 });
+      // Return 200 to avoid Cal.com marking webhook as broken
+      return NextResponse.json({ error: 'Server not configured' }, { status: 200 });
     }
 
     // Authenticate with Google Sheets
@@ -69,7 +77,8 @@ export async function POST(request: NextRequest) {
     
     if (emailColumnIndex === -1 || callBookedColumnIndex === -1) {
       console.error('Required columns not found in sheet');
-      return NextResponse.json({ error: 'Sheet columns not found' }, { status: 500 });
+      // Return 200 to avoid Cal.com marking webhook as broken
+      return NextResponse.json({ error: 'Sheet columns not found' }, { status: 200 });
     }
     
     // Find the row with matching email
@@ -83,7 +92,8 @@ export async function POST(request: NextRequest) {
 
     if (rowIndex === -1) {
       console.error('Email not found in sheet:', email);
-      return NextResponse.json({ error: 'Email not found' }, { status: 404 });
+      // Return 200 anyway - Cal.com considers non-200 a failure
+      return NextResponse.json({ error: 'Email not found', email }, { status: 200 });
     }
 
     // Convert column index to letter (0=A, 1=B, etc.)
@@ -105,6 +115,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, email, row: rowIndex + 1 });
   } catch (error) {
     console.error('Cal.com webhook error:', error);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    // Return 200 to avoid Cal.com marking webhook as broken
+    return NextResponse.json({ error: 'Server error', details: String(error) }, { status: 200 });
   }
 }
