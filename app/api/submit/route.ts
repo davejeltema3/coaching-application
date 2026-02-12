@@ -50,10 +50,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Return qualification result
+    // NOTE: Calendar link temporarily disabled until channel verification is live
     return NextResponse.json({
       qualified: qualification.qualified,
       score: qualification.score,
-      calBookingUrl: process.env.CAL_BOOKING_URL || 'https://cal.com/davejeltema/bcp-1',
+      // calBookingUrl: process.env.CAL_BOOKING_URL || 'https://cal.com/davejeltema/bcp-1',
     });
   } catch (error) {
     console.error('Submission error:', error);

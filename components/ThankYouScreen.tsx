@@ -47,18 +47,8 @@ export default function ThankYouScreen({
               You&apos;re in!
             </h1>
             <p className="text-lg text-slate-300 mb-8 leading-relaxed">
-              Your application looks great. Pick a time below and I&apos;ll reach out to you as soon as I can.
+              Your application looks great. I&apos;ll review your channel and reach out within 24 hours with next steps.
             </p>
-            <div className="mb-8">
-              <a
-                href={calBookingUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg px-8 py-4 rounded-lg transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-blue-500/50"
-              >
-                Pick a Time →
-              </a>
-            </div>
             <p className="text-sm text-slate-400">
               Or reach out directly at{' '}
               <a
