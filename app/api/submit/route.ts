@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
           channel_url: data.channel_url,
           challenge: data.challenge,
           content_type: data.content_type,
+          target_audience: data.target_audience,
           program_goals: data.program_goals,
           qualified: qualification.qualified,
           score: qualification.score,
@@ -68,6 +69,7 @@ interface KitExtraData {
   channel_url?: string;
   challenge?: string;
   content_type?: string;
+  target_audience?: string;
   program_goals?: string;
   qualified?: boolean;
   score?: number;
@@ -94,6 +96,7 @@ async function subscribeToKit(email: string, firstName: string, extra?: KitExtra
         ...(extra?.channel_url ? { youtube_channel: extra.channel_url } : {}),
         ...(extra?.challenge ? { core_problem: extra.challenge } : {}),
         ...(extra?.content_type ? { content_type: extra.content_type } : {}),
+        ...(extra?.target_audience ? { target_audience: extra.target_audience } : {}),
         ...(extra?.program_goals ? { program_goals: extra.program_goals } : {}),
       },
     }),

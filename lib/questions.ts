@@ -92,6 +92,14 @@ export const questions: Question[] = [
     ],
   },
   {
+    id: 'target_audience',
+    type: 'text',
+    question: 'Who do you want to make content for?',
+    subtext: "If that's different from who currently watches your videos, tell me both. This is one of the most important things for me to understand.",
+    required: true,
+    placeholder: 'e.g. I want to reach small business owners who need marketing help, but right now I mostly get other marketers...',
+  },
+  {
     id: 'program_goals',
     type: 'text',
     question: 'What are you hoping to get out of this program?',
@@ -152,6 +160,7 @@ export interface FormData {
   subscribers?: string;
   monetized?: string;
   content_type?: string;
+  target_audience?: string;
   goal?: string;
   program_goals?: string;
   upload_schedule?: string;
