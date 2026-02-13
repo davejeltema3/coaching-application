@@ -71,18 +71,21 @@ export async function POST(request: NextRequest) {
 
     const sheets = google.sheets({ version: 'v4', auth });
 
-    // Get ALL rows - Google Forms can have 50+ rows, need to read them all
+    // Get rows - read more than we need to ensure we get everything
+    // Google Forms typically uses columns A-T for responses
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SHEET_ID,
-      range: 'Form Responses 1', // Just the sheet name - gets everything
-      valueRenderOption: 'UNFORMATTED_VALUE',
+      range: 'Form Responses 1!A1:T200', // Read first 200 rows explicitly
+      valueRenderOption: 'FORMATTED_VALUE',
     });
 
-    const rows = response.data.values || [];
+    const rows = (response.data.values || []).filter(row => 
+      row && row.some(cell => cell !== null && cell !== undefined && cell !== '')
+    ); // Filter out completely empty rows
     
     console.log('=== SHEETS API DEBUG ===');
-    console.log('Total rows returned:', rows.length);
-    console.log('Range requested:', 'Form Responses 1!A1:Z1000');
+    console.log('Total rows returned (after filtering empty):', rows.length);
+    console.log('Range requested: Form Responses 1!A1:T200');
     console.log('First 3 rows:', JSON.stringify(rows.slice(0, 3)));
     console.log('Last 3 rows:', JSON.stringify(rows.slice(-3)));
     console.log('=== END SHEETS DEBUG ===');
