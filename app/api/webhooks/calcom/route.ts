@@ -98,6 +98,7 @@ export async function POST(request: NextRequest) {
     const headers = rows[0] || [];
     const emailColumnIndex = headers.indexOf('Email');
     const callBookedColumnIndex = headers.indexOf('Call Booked');
+    const statusColumnIndex = headers.indexOf('Status');
     
     if (emailColumnIndex === -1 || callBookedColumnIndex === -1) {
       console.error('Required columns not found in sheet');
@@ -137,21 +138,37 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Email not found', email }, { status: 200 });
     }
 
-    // Convert column index to letter (0=A, 1=B, etc.)
-    const columnLetter = String.fromCharCode(65 + callBookedColumnIndex);
-    const cellRange = `Form Responses 1!${columnLetter}${rowIndex + 1}`;
+    // Prepare updates for both Call Booked and Status columns
+    const updates = [];
     
-    // Update the "Call Booked" cell to ✓
-    await sheets.spreadsheets.values.update({
+    // Update "Call Booked" column
+    const callBookedLetter = String.fromCharCode(65 + callBookedColumnIndex);
+    const callBookedRange = `Form Responses 1!${callBookedLetter}${rowIndex + 1}`;
+    updates.push({
+      range: callBookedRange,
+      values: [['✓']],
+    });
+    
+    // Update "Status" column if it exists
+    if (statusColumnIndex !== -1) {
+      const statusLetter = String.fromCharCode(65 + statusColumnIndex);
+      const statusRange = `Form Responses 1!${statusLetter}${rowIndex + 1}`;
+      updates.push({
+        range: statusRange,
+        values: [['Call Booked']],
+      });
+    }
+    
+    // Batch update both cells
+    await sheets.spreadsheets.values.batchUpdate({
       spreadsheetId: SHEET_ID,
-      range: cellRange,
-      valueInputOption: 'RAW',
       requestBody: {
-        values: [['✓']],
+        valueInputOption: 'RAW',
+        data: updates,
       },
     });
 
-    console.log(`Updated row ${rowIndex + 1} - Call Booked = ✓ for ${email}`);
+    console.log(`Updated row ${rowIndex + 1} - Call Booked = ✓, Status = Call Booked for ${email}`);
 
     return NextResponse.json({ success: true, email, row: rowIndex + 1 });
   } catch (error) {
