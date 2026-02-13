@@ -71,11 +71,11 @@ export async function POST(request: NextRequest) {
 
     const sheets = google.sheets({ version: 'v4', auth });
 
-    // Get all rows from the sheet (explicit large range to avoid API limiting)
+    // Get ALL rows - Google Forms can have 50+ rows, need to read them all
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SHEET_ID,
-      range: 'Form Responses 1!A1:Z1000', // Explicit range to get first 1000 rows
-      valueRenderOption: 'UNFORMATTED_VALUE', // Get raw values
+      range: 'Form Responses 1', // Just the sheet name - gets everything
+      valueRenderOption: 'UNFORMATTED_VALUE',
     });
 
     const rows = response.data.values || [];
@@ -100,20 +100,28 @@ export async function POST(request: NextRequest) {
     
     // Debug: Log all emails in sheet
     console.log('Looking for email:', email);
-    console.log('Emails in sheet:', rows.slice(1).map(r => r[emailColumnIndex]).filter(Boolean));
+    console.log('Emails in "Email" column:', rows.slice(1).map(r => r[emailColumnIndex]).filter(Boolean));
     
-    // Find the row with matching email
+    // Find the row with matching email - search ALL columns since form structure may have changed
     let rowIndex = -1;
+    let foundColumnIndex = -1;
+    
     for (let i = 1; i < rows.length; i++) { // Start at 1 to skip header
-      const sheetEmail = rows[i][emailColumnIndex]?.trim().toLowerCase();
       const searchEmail = email.trim().toLowerCase();
       
-      console.log(`Comparing row ${i}: "${sheetEmail}" vs "${searchEmail}"`);
-      
-      if (sheetEmail === searchEmail) {
-        rowIndex = i;
-        break;
+      // Search every column in this row for the email
+      for (let colIndex = 0; colIndex < (rows[i]?.length || 0); colIndex++) {
+        const cellValue = rows[i][colIndex]?.toString().trim().toLowerCase();
+        
+        if (cellValue === searchEmail) {
+          rowIndex = i;
+          foundColumnIndex = colIndex;
+          console.log(`Found email in row ${i}, column ${colIndex}: "${rows[i][colIndex]}"`);
+          break;
+        }
       }
+      
+      if (rowIndex !== -1) break;
     }
 
     if (rowIndex === -1) {
