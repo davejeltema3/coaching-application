@@ -71,10 +71,11 @@ export async function POST(request: NextRequest) {
 
     const sheets = google.sheets({ version: 'v4', auth });
 
-    // Get all rows from the sheet
+    // Get all rows from the sheet (explicit large range to avoid API limiting)
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SHEET_ID,
-      range: 'Form Responses 1!A:Z', // Get all columns
+      range: 'Form Responses 1!A1:Z1000', // Explicit range to get first 1000 rows
+      valueRenderOption: 'UNFORMATTED_VALUE', // Get raw values
     });
 
     const rows = response.data.values || [];
