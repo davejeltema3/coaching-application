@@ -12,16 +12,38 @@ Automatically notifies you via Discord + WhatsApp when someone gets tagged as "B
 
 ## Setup Steps
 
-### 1. Create Webhook in Kit
+### 1. Get Your Kit V3 API Secret
 
-1. Go to https://app.kit.com/account_settings/webhooks
-2. Click **Create Webhook**
-3. **Webhook URL:** `https://apply.boundlesscreator.com/api/webhooks/kit-member`
-4. **Event:** Select **"Subscriber is tagged"**
-5. **Tag:** Select **"BCP Member"** (tag ID 8240961)
-6. Click **Create Webhook**
+1. Go to https://app.kit.com/account_settings/developer_settings
+2. Copy your **API Secret** (V3 API)
+3. Keep it handy for the next step
 
-That's it! No secrets or API keys needed.
+### 2. Create Webhook via API
+
+Kit webhooks must be configured via API (no UI). Two options:
+
+**Option A: Use the setup script (easiest)**
+```bash
+cd projects/coaching-application
+chmod +x scripts/setup-kit-webhook.sh
+KIT_API_KEY=your_v3_api_secret ./scripts/setup-kit-webhook.sh
+```
+
+**Option B: Manual API call**
+```bash
+curl -X POST "https://api.convertkit.com/v3/automations/hooks" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "api_secret": "your_v3_api_secret",
+    "target_url": "https://apply.boundlesscreator.com/api/webhooks/kit-member",
+    "event": {
+      "name": "subscriber.tag_add",
+      "tag_id": 8240961
+    }
+  }'
+```
+
+You should see a response with `"rule": { ... }` confirming the webhook was created.
 
 ### 2. Verify Env Vars in Vercel
 

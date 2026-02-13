@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
 
+// Disable body size limit for webhooks
+export const maxDuration = 10;
+
 export async function POST(req: Request) {
   try {
     const payload = await req.json();
