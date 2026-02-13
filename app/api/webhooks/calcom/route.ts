@@ -80,6 +80,13 @@ export async function POST(request: NextRequest) {
 
     const rows = response.data.values || [];
     
+    console.log('=== SHEETS API DEBUG ===');
+    console.log('Total rows returned:', rows.length);
+    console.log('Range requested:', 'Form Responses 1!A1:Z1000');
+    console.log('First 3 rows:', JSON.stringify(rows.slice(0, 3)));
+    console.log('Last 3 rows:', JSON.stringify(rows.slice(-3)));
+    console.log('=== END SHEETS DEBUG ===');
+    
     // Find column indices from header row
     const headers = rows[0] || [];
     const emailColumnIndex = headers.indexOf('Email');
