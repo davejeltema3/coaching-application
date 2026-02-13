@@ -71,23 +71,27 @@ export async function POST(request: NextRequest) {
 
     const sheets = google.sheets({ version: 'v4', auth });
 
-    // Get rows - read more than we need to ensure we get everything
-    // Google Forms typically uses columns A-T for responses
+    // Get ALL data - use A:ZZ to get every possible column, 500 rows
+    // This bypasses Google's "smart" detection of data boundaries
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SHEET_ID,
-      range: 'Form Responses 1!A1:T200', // Read first 200 rows explicitly
+      range: 'Form Responses 1!A:ZZ', // All columns, all rows
       valueRenderOption: 'FORMATTED_VALUE',
     });
 
-    const rows = (response.data.values || []).filter(row => 
+    const allRows = response.data.values || [];
+    
+    // Filter out completely empty rows (all cells null/empty)
+    const rows = allRows.filter(row => 
       row && row.some(cell => cell !== null && cell !== undefined && cell !== '')
-    ); // Filter out completely empty rows
+    );
     
     console.log('=== SHEETS API DEBUG ===');
-    console.log('Total rows returned (after filtering empty):', rows.length);
-    console.log('Range requested: Form Responses 1!A1:T200');
-    console.log('First 3 rows:', JSON.stringify(rows.slice(0, 3)));
-    console.log('Last 3 rows:', JSON.stringify(rows.slice(-3)));
+    console.log('Total rows from API:', allRows.length);
+    console.log('Total rows after filtering empty:', rows.length);
+    console.log('Range requested: Form Responses 1!A:ZZ (all columns, all rows)');
+    console.log('Row 17 exists?', rows[16] ? 'YES' : 'NO');
+    console.log('Row 50 exists?', rows[49] ? 'YES' : 'NO');
     console.log('=== END SHEETS DEBUG ===');
     
     // Find column indices from header row
