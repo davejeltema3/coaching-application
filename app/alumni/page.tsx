@@ -1,7 +1,12 @@
 'use client';
 
 import React from 'react';
-import { CheckCircle2 } from 'lucide-react';
+
+const CheckIcon = () => (
+  <svg className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+);
 
 export default function AlumniOfferPage() {
   return (
@@ -40,27 +45,27 @@ export default function AlumniOfferPage() {
             </div>
             <ul className="space-y-2 text-sm text-slate-300 mb-6">
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <span>6 months of support</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <span>Monthly 1:1 strategy calls</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <span>Instant chat access</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <span>Weekly office hours</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <span>Private Discord community</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <span>Deep-dive channel review</span>
               </li>
             </ul>
@@ -75,27 +80,27 @@ export default function AlumniOfferPage() {
             </div>
             <ul className="space-y-2 text-sm text-slate-300 mb-6">
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <span>3 months of support</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <span>Monthly 1:1 strategy calls</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <span>Instant chat access</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <span>Weekly office hours</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <span>Private Discord community</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <span>Deep-dive channel review</span>
               </li>
             </ul>
@@ -110,23 +115,23 @@ export default function AlumniOfferPage() {
             </div>
             <ul className="space-y-2 text-sm text-slate-300 mb-6">
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <span>6 months of support</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <span>Monthly 1:1 strategy calls</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <span>Instant chat access</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <span>Weekly office hours</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <span>Private Discord community</span>
               </li>
             </ul>
@@ -141,23 +146,23 @@ export default function AlumniOfferPage() {
             </div>
             <ul className="space-y-2 text-sm text-slate-300 mb-6">
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <span>3 months of support</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <span>Monthly 1:1 strategy calls</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <span>Instant chat access</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <span>Weekly office hours</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <span>Private Discord community</span>
               </li>
             </ul>
