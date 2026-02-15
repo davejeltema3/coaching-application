@@ -70,22 +70,15 @@ export default function AlumniOfferPage() {
                 <span>Deep-dive channel review</span>
               </li>
             </ul>
-            <a
-              href="/api/checkout/alumni/6mo-premium"
-              className="block w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold text-center transition-colors"
-            >
-              Pay Now - $7,200
-            </a>
           </div>
 
           {/* 3-Month Premium */}
           <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 hover:border-blue-500 transition-colors">
             <div className="text-sm text-slate-400 mb-2">3-Month Premium</div>
-            <div className="flex items-baseline gap-2 mb-2">
+            <div className="flex items-baseline gap-2 mb-4">
               <span className="text-3xl font-bold">$4,500</span>
               <span className="text-slate-400 line-through">$6,000</span>
             </div>
-            <div className="text-xs text-green-400 mb-4">Save $1,500</div>
             <ul className="space-y-2 text-sm text-slate-300 mb-6">
               <li className="flex items-start gap-2">
                 <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
@@ -112,22 +105,15 @@ export default function AlumniOfferPage() {
                 <span>Deep-dive channel review</span>
               </li>
             </ul>
-            <a
-              href="/api/checkout/alumni/3mo-premium"
-              className="block w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold text-center transition-colors"
-            >
-              Pay Now - $4,500
-            </a>
           </div>
 
           {/* 6-Month Standard */}
           <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 hover:border-blue-500 transition-colors">
             <div className="text-sm text-slate-400 mb-2">6-Month Standard</div>
-            <div className="flex items-baseline gap-2 mb-2">
+            <div className="flex items-baseline gap-2 mb-4">
               <span className="text-3xl font-bold">$4,350</span>
               <span className="text-slate-400 line-through">$5,800</span>
             </div>
-            <div className="text-xs text-green-400 mb-4">Save $1,450</div>
             <ul className="space-y-2 text-sm text-slate-300 mb-6">
               <li className="flex items-start gap-2">
                 <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
@@ -150,22 +136,15 @@ export default function AlumniOfferPage() {
                 <span>Private Discord community</span>
               </li>
             </ul>
-            <a
-              href="/api/checkout/alumni/6mo-standard"
-              className="block w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold text-center transition-colors"
-            >
-              Pay Now - $4,350
-            </a>
           </div>
 
           {/* 3-Month Standard */}
           <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 hover:border-blue-500 transition-colors">
             <div className="text-sm text-slate-400 mb-2">3-Month Standard</div>
-            <div className="flex items-baseline gap-2 mb-2">
+            <div className="flex items-baseline gap-2 mb-4">
               <span className="text-3xl font-bold">$2,625</span>
               <span className="text-slate-400 line-through">$3,500</span>
             </div>
-            <div className="text-xs text-green-400 mb-4">Save $875</div>
             <ul className="space-y-2 text-sm text-slate-300 mb-6">
               <li className="flex items-start gap-2">
                 <CheckIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
@@ -188,12 +167,6 @@ export default function AlumniOfferPage() {
                 <span>Private Discord community</span>
               </li>
             </ul>
-            <a
-              href="/api/checkout/alumni/3mo-standard"
-              className="block w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold text-center transition-colors"
-            >
-              Pay Now - $2,625
-            </a>
           </div>
         </div>
 
