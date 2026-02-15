@@ -71,10 +71,10 @@ export default function AlumniOfferPage() {
               </li>
             </ul>
             <a
-              href="/api/checkout/alumni/6mo-premium"
+              href="/checkout/alumni/6mo-premium"
               className="block w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold text-center transition-colors"
             >
-              Pay Now - $7,200
+              Choose Payment Option →
             </a>
           </div>
 
@@ -113,10 +113,10 @@ export default function AlumniOfferPage() {
               </li>
             </ul>
             <a
-              href="/api/checkout/alumni/3mo-premium"
+              href="/checkout/alumni/3mo-premium"
               className="block w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold text-center transition-colors"
             >
-              Pay Now - $4,500
+              Choose Payment Option →
             </a>
           </div>
 
@@ -151,10 +151,10 @@ export default function AlumniOfferPage() {
               </li>
             </ul>
             <a
-              href="/api/checkout/alumni/6mo-standard"
+              href="/checkout/alumni/6mo-standard"
               className="block w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold text-center transition-colors"
             >
-              Pay Now - $4,350
+              Choose Payment Option →
             </a>
           </div>
 
@@ -189,10 +189,10 @@ export default function AlumniOfferPage() {
               </li>
             </ul>
             <a
-              href="/api/checkout/alumni/3mo-standard"
+              href="/checkout/alumni/3mo-standard"
               className="block w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold text-center transition-colors"
             >
-              Pay Now - $2,625
+              Choose Payment Option →
             </a>
           </div>
         </div>
