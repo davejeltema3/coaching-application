@@ -46,7 +46,7 @@ export default function Alumni6moStandardCheckout() {
     setError(undefined);
 
     try {
-      const response = await fetch('/api/checkout/alumni/6mo-standard', {
+      const response = await fetch('/api/checkout/alumni/6mo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ paymentOptionId: selectedOption }),
