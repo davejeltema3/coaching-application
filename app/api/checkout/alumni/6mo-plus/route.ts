@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
       line_items: lineItems,
       mode,
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://apply.boundlesscreator.com'}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://apply.boundlesscreator.com'}/checkout/alumni/6mo-premium`,
+      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://apply.boundlesscreator.com'}/checkout/alumni/6mo-plus`,
       allow_promotion_codes: false,
       metadata: {
         tier: '6mo-premium',

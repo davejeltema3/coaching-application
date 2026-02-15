@@ -33,9 +33,13 @@ export default function PreviewPage() {
   ];
 
   // Checkout tabs
+  const alumniPlans = ['3mo', '3mo-plus', '6mo', '6mo-plus'];
   const checkoutTabs = [
     { id: 'all-checkout', label: 'All Plans' },
     ...Object.keys(plans).map((code) => ({ id: `checkout-${code}`, label: code })),
+    { id: 'alumni-divider', label: '—' },
+    { id: 'all-alumni', label: 'All Alumni' },
+    ...alumniPlans.map((code) => ({ id: `alumni-${code}`, label: `alumni/${code}` })),
   ];
 
   // Post-payment tabs
@@ -263,6 +267,146 @@ export default function PreviewPage() {
     );
   };
 
+  const renderAlumniCheckoutScreen = (planCode: string) => {
+    const alumniPricing: Record<string, { name: string; duration: string; tagline: string; features: string[]; price: number; originalPrice: number; paymentOptions: Array<{ label: string; description: string; amount: number; total?: number }> }> = {
+      '3mo': {
+        name: 'Boundless Creator Program',
+        duration: '3 months',
+        tagline: 'Kickstart your channel growth with focused, personalized coaching.',
+        features: ['30-minute onboarding call', 'Community access (Discord)', 'Weekly office hours (Wednesdays 2 PM EST)', 'Direct messaging support'],
+        price: 2625,
+        originalPrice: 3500,
+        paymentOptions: [
+          { label: 'Pay in Full', description: 'One-time payment', amount: 2625 },
+          { label: '2 Monthly Payments', description: '$1,500/mo for 2 months', amount: 1500, total: 3000 },
+        ],
+      },
+      '3mo-plus': {
+        name: 'Boundless Creator Program',
+        duration: '3 months',
+        tagline: 'The full Deep Dive experience with hands-on strategy and accountability.',
+        features: ['3-hour Deep Dive strategy call (with prep)', 'Monthly 1:1 accountability call', 'Priority chat support (ASAP response)', 'Community access (Discord)', 'Weekly office hours (Wednesdays 2 PM EST)', 'Personalized strategy document'],
+        price: 4500,
+        originalPrice: 6000,
+        paymentOptions: [
+          { label: 'Pay in Full', description: 'One-time payment', amount: 4500 },
+          { label: '2 Monthly Payments', description: '$2,625/mo for 2 months', amount: 2625, total: 5250 },
+          { label: '3 Monthly Payments', description: '$1,875/mo for 3 months', amount: 1875, total: 5625 },
+        ],
+      },
+      '6mo': {
+        name: 'Boundless Creator Program',
+        duration: '6 months',
+        tagline: 'Six months of focused coaching to transform your channel.',
+        features: ['30-minute onboarding call', 'Community access (Discord)', 'Weekly office hours (Wednesdays 2 PM EST)', 'Direct messaging support'],
+        price: 4350,
+        originalPrice: 5800,
+        paymentOptions: [
+          { label: 'Pay in Full', description: 'One-time payment', amount: 4350 },
+          { label: '2 Monthly Payments', description: '$2,475/mo for 2 months', amount: 2475, total: 4950 },
+          { label: '3 Monthly Payments', description: '$1,800/mo for 3 months', amount: 1800, total: 5400 },
+        ],
+      },
+      '6mo-plus': {
+        name: 'Boundless Creator Program',
+        duration: '6 months',
+        tagline: 'The ultimate coaching experience. Deep Dive strategy, monthly calls, and priority access.',
+        features: ['3-hour Deep Dive strategy call (with prep)', 'Monthly 1:1 accountability call', 'Priority chat support (ASAP response)', 'Community access (Discord)', 'Weekly office hours (Wednesdays 2 PM EST)', 'Personalized strategy document'],
+        price: 7200,
+        originalPrice: 9600,
+        paymentOptions: [
+          { label: 'Pay in Full', description: 'One-time payment', amount: 7200 },
+          { label: '2 Monthly Payments', description: '$4,125/mo for 2 months', amount: 4125, total: 8250 },
+          { label: '3 Monthly Payments', description: '$3,000/mo for 3 months', amount: 3000, total: 9000 },
+        ],
+      },
+    };
+
+    const plan = alumniPricing[planCode];
+    if (!plan) return null;
+
+    return (
+      <div key={`alumni-${planCode}`} className="border border-slate-700 rounded-lg overflow-hidden">
+        <div className="bg-slate-800 px-4 py-2 text-sm text-slate-400 font-mono flex justify-between">
+          <span>Checkout: /checkout/alumni/{planCode}</span>
+          <span className="text-green-400">${plan.price} (25% off ${plan.originalPrice})</span>
+        </div>
+        <div className="bg-slate-950 p-6">
+          {/* Plan Header */}
+          <div className="bg-gradient-to-r from-green-600/20 to-green-500/10 border border-slate-800 rounded-lg p-6 mb-6">
+            <div className="inline-block px-3 py-1 bg-green-500/20 border border-green-500/50 rounded-full text-green-400 text-xs font-medium mb-3">
+              25% Alumni Discount
+            </div>
+            <div className="text-green-400 text-sm font-medium mb-1">{plan.duration}</div>
+            <h2 className="text-2xl font-bold text-white mb-2">{plan.name}</h2>
+            <p className="text-slate-300">{plan.tagline}</p>
+          </div>
+
+          {/* Features */}
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-white mb-3">What&apos;s Included</h3>
+            <ul className="space-y-2">
+              {plan.features.map((feature, i) => (
+                <li key={i} className="flex items-start gap-3">
+                  <svg className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-slate-300">{feature}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Payment Options */}
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-white mb-3">Payment Options</h3>
+            <div className="space-y-3">
+              {plan.paymentOptions.map((option, i) => (
+                <div
+                  key={i}
+                  className={`p-4 rounded-lg border-2 ${
+                    i === 0
+                      ? 'border-green-500 bg-green-500/10'
+                      : 'border-slate-700 bg-slate-800/50'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="font-semibold text-white">{option.label}</div>
+                      <div className="text-sm text-slate-400 mt-0.5">{option.description}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xl font-bold text-white">
+                        ${option.amount.toLocaleString()}
+                      </div>
+                      {option.total && (
+                        <div className="text-xs text-slate-500 mt-0.5">
+                          ${option.total.toLocaleString()} total
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Button preview */}
+          <button className="w-full bg-green-600 text-white font-semibold text-lg px-8 py-4 rounded-lg opacity-75 cursor-default">
+            Pay ${plan.paymentOptions[0].amount.toLocaleString()}
+          </button>
+
+          <div className="mt-4 bg-slate-800/50 border border-slate-700 rounded-lg p-4 text-center">
+            <p className="text-slate-400 text-sm">
+              <span className="text-white font-medium">Money-Back Guarantee:</span>{' '}
+              Attend at least half the calls and publish 12 videos. Full refund if not worth it.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderWelcomeScreen = (type: 'success' | 'error') => {
     if (type === 'success') {
       return (
@@ -360,15 +504,33 @@ export default function PreviewPage() {
       </div>
     );
   } else if (activeSection === 'checkout') {
-    const planCodes =
-      activeTab === 'all-checkout'
-        ? Object.keys(plans)
-        : [activeTab.replace('checkout-', '')];
-    content = (
-      <div className="space-y-8">
-        {planCodes.map((code) => renderCheckoutScreen(code))}
-      </div>
-    );
+    if (activeTab === 'alumni-divider') {
+      content = null; // Divider tab, do nothing
+    } else if (activeTab === 'all-alumni') {
+      const alumniPlans = ['3mo', '3mo-plus', '6mo', '6mo-plus'];
+      content = (
+        <div className="space-y-8">
+          {alumniPlans.map((code) => renderAlumniCheckoutScreen(code))}
+        </div>
+      );
+    } else if (activeTab.startsWith('alumni-')) {
+      const planCode = activeTab.replace('alumni-', '');
+      content = (
+        <div className="space-y-8">
+          {renderAlumniCheckoutScreen(planCode)}
+        </div>
+      );
+    } else {
+      const planCodes =
+        activeTab === 'all-checkout'
+          ? Object.keys(plans)
+          : [activeTab.replace('checkout-', '')];
+      content = (
+        <div className="space-y-8">
+          {planCodes.map((code) => renderCheckoutScreen(code))}
+        </div>
+      );
+    }
   } else if (activeSection === 'post-payment') {
     if (activeTab === 'welcome-success' || activeTab === 'all') {
       content = (
@@ -425,17 +587,23 @@ export default function PreviewPage() {
           {/* Sub-tabs */}
           <div className="flex gap-2 overflow-x-auto pb-1">
             {currentTabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`px-3 py-1.5 rounded text-sm whitespace-nowrap transition-colors ${
-                  activeTab === tab.id
-                    ? 'bg-slate-700 text-white'
-                    : 'bg-slate-800/50 text-slate-500 hover:text-slate-300'
-                }`}
-              >
-                {tab.label}
-              </button>
+              tab.id === 'alumni-divider' ? (
+                <span key={tab.id} className="px-3 py-1.5 text-slate-600 text-sm">
+                  {tab.label}
+                </span>
+              ) : (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`px-3 py-1.5 rounded text-sm whitespace-nowrap transition-colors ${
+                    activeTab === tab.id
+                      ? 'bg-slate-700 text-white'
+                      : 'bg-slate-800/50 text-slate-500 hover:text-slate-300'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              )
             ))}
           </div>
         </div>

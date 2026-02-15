@@ -49,7 +49,7 @@ export default function AlumniOfferPage() {
               </li>
             </ul>
             <a
-              href="/checkout/alumni/6mo-premium"
+              href="/checkout/alumni/6mo-plus"
               className="block w-full px-4 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-semibold text-center transition-colors"
             >
               View Payment Options →
@@ -78,7 +78,7 @@ export default function AlumniOfferPage() {
               </li>
             </ul>
             <a
-              href="/checkout/alumni/3mo-premium"
+              href="/checkout/alumni/3mo-plus"
               className="block w-full px-4 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-semibold text-center transition-colors"
             >
               View Payment Options →
@@ -107,7 +107,7 @@ export default function AlumniOfferPage() {
               </li>
             </ul>
             <a
-              href="/checkout/alumni/6mo-standard"
+              href="/checkout/alumni/6mo"
               className="block w-full px-4 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-semibold text-center transition-colors"
             >
               View Payment Options →
@@ -136,7 +136,7 @@ export default function AlumniOfferPage() {
               </li>
             </ul>
             <a
-              href="/checkout/alumni/3mo-standard"
+              href="/checkout/alumni/3mo"
               className="block w-full px-4 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-semibold text-center transition-colors"
             >
               View Payment Options →

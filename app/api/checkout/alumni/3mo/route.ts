@@ -17,10 +17,10 @@ export async function POST(request: NextRequest) {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: 'BCP 3-Month Premium (Alumni 25% Off)',
-              description: '3 months • Deep Dive • Monthly 1:1 • Priority chat • Discord • Office hours',
+              name: 'BCP 3-Month Standard (Alumni 25% Off)',
+              description: '3 months • Onboarding call • Discord • Office hours • Direct messaging',
             },
-            unit_amount: 450000, // $4,500
+            unit_amount: 262500, // $2,625
           },
           quantity: 1,
         }];
@@ -31,33 +31,14 @@ export async function POST(request: NextRequest) {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: 'BCP 3-Month Premium (Alumni 25% Off) - 2 Payments',
-              description: '3 months • Deep Dive • Monthly 1:1 • Priority chat • Discord • Office hours',
+              name: 'BCP 3-Month Standard (Alumni 25% Off) - 2 Payments',
+              description: '3 months • Onboarding call • Discord • Office hours • Direct messaging',
             },
             recurring: {
               interval: 'month',
               interval_count: 1,
             },
-            unit_amount: 262500, // $2,625/mo
-          },
-          quantity: 1,
-        }];
-        mode = 'subscription';
-        break;
-      
-      case '3x':
-        lineItems = [{
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: 'BCP 3-Month Premium (Alumni 25% Off) - 3 Payments',
-              description: '3 months • Deep Dive • Monthly 1:1 • Priority chat • Discord • Office hours',
-            },
-            recurring: {
-              interval: 'month',
-              interval_count: 1,
-            },
-            unit_amount: 187500, // $1,875/mo
+            unit_amount: 150000, // $1,500/mo
           },
           quantity: 1,
         }];
@@ -73,12 +54,12 @@ export async function POST(request: NextRequest) {
       line_items: lineItems,
       mode,
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://apply.boundlesscreator.com'}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://apply.boundlesscreator.com'}/checkout/alumni/3mo-premium`,
+      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://apply.boundlesscreator.com'}/checkout/alumni/3mo`,
       allow_promotion_codes: false,
       metadata: {
-        tier: '3mo-premium',
+        tier: '3mo-standard',
         discount: 'alumni-25',
-        original_price: '6000',
+        original_price: '3500',
         payment_option: paymentOptionId,
       },
     });
