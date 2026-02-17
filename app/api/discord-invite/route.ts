@@ -23,6 +23,11 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    // Log env vars for debugging
+    console.log('DISCORD_BOT_TOKEN exists:', !!DISCORD_BOT_TOKEN);
+    console.log('DISCORD_CHANNEL_ID:', DISCORD_CHANNEL_ID);
+    console.log('INVITE_SECRET exists:', !!INVITE_SECRET);
+    
     // Generate a unique 7-day, 1-use invite
     const response = await fetch(
       `https://discord.com/api/v10/channels/${DISCORD_CHANNEL_ID}/invites`,
@@ -41,9 +46,11 @@ export async function GET(request: NextRequest) {
     );
 
     if (!response.ok) {
-      console.error('Discord API error:', await response.text());
+      const errorText = await response.text();
+      console.error('Discord API error status:', response.status);
+      console.error('Discord API error body:', errorText);
       return NextResponse.json(
-        { error: 'Failed to generate invite. Please contact hello@boundlesscreator.com' },
+        { error: 'Failed to generate invite. Please contact hello@boundlesscreator.com', debug: { status: response.status, body: errorText } },
         { status: 500 }
       );
     }
