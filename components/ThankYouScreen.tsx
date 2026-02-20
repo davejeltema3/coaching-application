@@ -90,7 +90,7 @@ export default function ThankYouScreen({
           </p>
           <div className="space-y-4 mb-8">
             <a
-              href="https://youtube.com/@DaveJeltema"
+              href="https://www.youtube.com/@davejeltema3"
               target="_blank"
               rel="noopener noreferrer"
               className="block bg-slate-800 hover:bg-slate-750 text-white font-semibold px-6 py-4 rounded-lg transition-all duration-200 hover:scale-[1.02] border border-slate-700"
@@ -98,7 +98,7 @@ export default function ThankYouScreen({
               📺 Watch my YouTube Channel
             </a>
             <a
-              href="https://boundlesscreator.com/newsletter"
+              href="https://boundlesscreator.kit.com/newsletter"
               target="_blank"
               rel="noopener noreferrer"
               className="block bg-slate-800 hover:bg-slate-750 text-white font-semibold px-6 py-4 rounded-lg transition-all duration-200 hover:scale-[1.02] border border-slate-700"
