@@ -28,10 +28,12 @@ export async function POST(request: NextRequest) {
     }
 
     const origin = request.headers.get('origin') || 'https://apply.boundlesscreator.com';
+    const stripe = getStripe();
 
     if (paymentOption.recurring) {
-      // Subscription (payment plan)
-      const session = await getStripe().checkout.sessions.create({
+      // Limited subscription (payment plan)
+      // The webhook will convert this to a subscription schedule after checkout completes
+      const session = await stripe.checkout.sessions.create({
         mode: 'subscription',
         payment_method_types: ['card'],
         ...(customerEmail ? { customer_email: customerEmail } : {}),
@@ -57,12 +59,14 @@ export async function POST(request: NextRequest) {
             payment_option: paymentOption.id,
             total_payments: paymentOption.recurring.totalPayments.toString(),
             duration: plan.duration,
+            needs_schedule: 'true', // Flag for webhook to create schedule
           },
         },
         metadata: {
           plan_code: plan.code,
           payment_option: paymentOption.id,
           duration: plan.duration,
+          total_payments: paymentOption.recurring.totalPayments.toString(),
         },
         success_url: `${origin}/welcome?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/checkout?plan=${plan.code}`,
@@ -72,7 +76,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ url: session.url });
     } else {
       // One-time payment
-      const session = await getStripe().checkout.sessions.create({
+      const session = await stripe.checkout.sessions.create({
         mode: 'payment',
         payment_method_types: ['card'],
         ...(customerEmail ? { customer_email: customerEmail } : {}),
