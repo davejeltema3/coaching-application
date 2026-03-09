@@ -18,6 +18,15 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // If webhook secret is not configured, log warning but don't fail
+  if (!process.env.STRIPE_WEBHOOK_SECRET) {
+    console.warn('STRIPE_WEBHOOK_SECRET not configured - webhook verification disabled!');
+    return NextResponse.json(
+      { error: 'Webhook secret not configured' },
+      { status: 500 }
+    );
+  }
+
   let event: Stripe.Event;
 
   try {
@@ -25,7 +34,7 @@ export async function POST(request: NextRequest) {
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET!
+      process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (err: any) {
     console.error('Webhook signature verification failed:', err.message);

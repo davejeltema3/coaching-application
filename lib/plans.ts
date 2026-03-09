@@ -151,6 +151,13 @@ export const plans: Record<string, Plan> = {
         amountCents: 400000,
         recurring: { interval: 'month', totalPayments: 3, totalCents: 1200000 },
       },
+      {
+        id: '6mo-plus-6x',
+        label: '6 Monthly Payments',
+        description: '$2,000/mo for 6 months',
+        amountCents: 200000,
+        recurring: { interval: 'month', totalPayments: 6, totalCents: 1200000 },
+      },
     ],
   },
 };
