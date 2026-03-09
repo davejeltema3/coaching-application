@@ -4,21 +4,46 @@
 
 The 2-month and 3-month payment plans created Stripe subscriptions that would charge **indefinitely** until manually cancelled. The `total_payments` metadata was stored but Stripe didn't use it to stop billing.
 
-## What's Fixed
+## Current Status
 
-- **Checkout API** (`/api/checkout/route.ts`) now flags recurring payments with `needs_schedule: 'true'`
-- **Stripe Webhook** (`/api/webhooks/stripe/route.ts`) converts subscriptions to schedules after checkout completes
-- **Subscription Schedules** automatically cancel after the specified number of payments
+⚠️ **Partially Fixed - Manual Tracking Required**
 
-## How It Works
+- **Checkout API** (`/api/checkout/route.ts`) flags recurring payments with `needs_schedule: 'true'` and stores `total_payments` in metadata
+- **Stripe Webhook** (`/api/webhooks/stripe/route.ts`) logs payment plan subscriptions to Vercel logs
+- **Auto-cancellation** not yet implemented - needs manual tracking for now
+
+The Stripe SDK version (20.3.1) doesn't support the newer API features for auto-canceling subscriptions after X payments. We need to either upgrade the SDK or build a custom payment tracker.
+
+## How It Works (Current Implementation)
 
 1. Customer selects a payment plan (e.g., "2 Monthly Payments")
-2. Checkout creates a regular subscription with metadata flag
+2. Checkout creates a subscription with metadata:
+   - `needs_schedule: 'true'`
+   - `total_payments: '2'` (or 3, 6, etc.)
+   - `plan_code`, `payment_option`, `duration`
 3. Webhook receives `checkout.session.completed` event
-4. Webhook converts subscription to a subscription schedule with:
-   - `iterations: X` (number of payments)
-   - `end_behavior: 'cancel'` (auto-cancel when done)
-5. After X payments, Stripe automatically cancels the subscription
+4. Webhook logs subscription details to Vercel logs
+5. **Manual step:** You need to track when to cancel the subscription
+
+## Temporary Workaround
+
+Until auto-cancellation is built:
+
+**Option 1: Manual Tracking**
+- Check Vercel logs after each payment plan purchase
+- Set a calendar reminder to cancel the subscription after X months
+- Cancel in Stripe dashboard: Subscriptions → [ID] → Cancel
+
+**Option 2: Monitor Stripe Dashboard**
+- Visit: https://dashboard.stripe.com/subscriptions
+- Filter by metadata: `needs_schedule: true`
+- Check `total_payments` in metadata
+- Count invoices and cancel when limit reached
+
+**Option 3: Build Custom Tracker (recommended)**
+- Create a cron job that checks active subscriptions
+- Count successful invoices for each subscription
+- Auto-cancel when invoice count == `total_payments`
 
 ## Setup Required
 
@@ -69,15 +94,33 @@ All of these now properly auto-cancel after X payments:
 - **6mo-plus**: 3-month plan ($4,000/mo × 3)
 - **6mo-plus**: 6-month plan ($2,000/mo × 6)
 
+## Permanent Fix (TODO)
+
+To fully automate payment plan cancellations:
+
+**Option A: Upgrade Stripe SDK**
+```bash
+npm install stripe@latest
+```
+Then use Subscription Schedules API with proper phase configurations.
+
+**Option B: Invoice Webhook Tracker**
+Create a new webhook handler:
+1. Listen to `invoice.payment_succeeded` events
+2. Count invoices for each subscription (store in database or metadata)
+3. When count reaches `total_payments`, cancel the subscription
+
+**Option C: Cron Job Monitor**
+Build a daily/weekly cron:
+1. Fetch all active subscriptions with `needs_schedule: true`
+2. Count paid invoices for each (via Stripe API)
+3. Cancel subscriptions that have reached their limit
+
 ## What Happens to Existing Subscriptions?
 
-**CRITICAL:** Any subscriptions created before this fix are still charging indefinitely!
+**CRITICAL:** Any subscriptions created before proper automation are still charging indefinitely!
 
-Since you don't have anyone on payment plans yet, this isn't an issue. But if you did, you would need to manually:
-
-1. Find active subscriptions in Stripe
-2. Create schedules for them with the correct `iterations`
-3. Attach the subscriptions to those schedules
+Since you don't have anyone on payment plans yet, this isn't an issue. When someone signs up for a payment plan, you'll need to manually track it or build one of the automation options above.
 
 ## Verification
 
