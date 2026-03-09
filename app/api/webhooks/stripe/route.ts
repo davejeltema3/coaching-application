@@ -50,47 +50,11 @@ export async function POST(request: NextRequest) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
         
-        // If this is a subscription checkout, handle it
+        // If this is a subscription checkout, log it for tracking
         if (session.mode === 'subscription' && session.subscription) {
-          const subscription = await stripe.subscriptions.retrieve(
-            session.subscription as string
-          );
-
-          // Check if this subscription needs to be converted to a schedule
-          if (subscription.metadata.needs_schedule === 'true') {
-            const totalPayments = parseInt(subscription.metadata.total_payments || '0');
-            
-            if (totalPayments > 0) {
-              // Create a subscription schedule from the existing subscription
-              await stripe.subscriptionSchedules.create({
-                from_subscription: subscription.id,
-                end_behavior: 'cancel',
-                phases: [
-                  {
-                    items: subscription.items.data.map(item => ({
-                      price: item.price.id,
-                      quantity: item.quantity,
-                    })),
-                    iterations: totalPayments,
-                    metadata: {
-                      plan_code: subscription.metadata.plan_code,
-                      payment_option: subscription.metadata.payment_option,
-                      duration: subscription.metadata.duration,
-                      total_payments: totalPayments.toString(),
-                    },
-                  },
-                ],
-                metadata: {
-                  plan_code: subscription.metadata.plan_code,
-                  payment_option: subscription.metadata.payment_option,
-                  duration: subscription.metadata.duration,
-                  total_payments: totalPayments.toString(),
-                },
-              });
-
-              console.log(`Created subscription schedule for ${subscription.id} with ${totalPayments} payments`);
-            }
-          }
+          console.log(`New subscription created: ${session.subscription}`);
+          console.log(`Customer email: ${session.customer_email}`);
+          console.log(`Metadata:`, session.metadata);
         }
         
         break;
