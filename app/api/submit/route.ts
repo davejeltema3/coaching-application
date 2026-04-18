@@ -40,9 +40,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Send Discord notification for qualified applications
-    if (qualification.qualified) {
+    // Send Discord notification for qualified OR edge cases (medium confidence)
+    const isEdgeCase = !qualification.qualified 
+      && qualification.aiEvaluation?.confidence === 'medium'
+      && !qualification.disqualified;
+    if (qualification.qualified || isEdgeCase) {
       try {
-        await sendDiscordNotification(data, qualification);
+        await sendDiscordNotification(data, qualification, isEdgeCase);
       } catch (error) {
         console.error('Discord notification error:', error);
       }
@@ -70,7 +74,7 @@ export async function POST(request: NextRequest) {
 
 // ── Discord Notification ──────────────────────────────────────────────
 
-async function sendDiscordNotification(data: FormData, qualification: QualificationResult) {
+async function sendDiscordNotification(data: FormData, qualification: QualificationResult, isEdgeCase = false) {
   const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
   if (!webhookUrl) return;
 
@@ -78,8 +82,8 @@ async function sendDiscordNotification(data: FormData, qualification: Qualificat
   const ai = qualification.aiEvaluation;
 
   const embed = {
-    title: '🔔 Qualified BCP Application',
-    color: 0x22c55e, // green
+    title: isEdgeCase ? '🟡 Edge Case BCP Application' : '🔔 Qualified BCP Application',
+    color: isEdgeCase ? 0xeab308 : 0x22c55e, // yellow for edge case, green for qualified
     fields: [
       { name: 'Name', value: `${data.first_name || ''} ${data.last_name || ''}`.trim() || 'Unknown', inline: true },
       { name: 'Email', value: data.email || 'N/A', inline: true },
