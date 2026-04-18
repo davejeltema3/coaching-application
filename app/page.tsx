@@ -16,9 +16,7 @@ export default function Home() {
   const [screen, setScreen] = useState<Screen>('welcome');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [formData, setFormData] = useState<FormData>({});
-  const [qualified, setQualified] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [calBookingUrl, setCalBookingUrl] = useState<string>();
   const [channelUrlError, setChannelUrlError] = useState<string>();
   const [phoneError, setPhoneError] = useState<string>();
   const [logoError, setLogoError] = useState(false);
@@ -96,8 +94,7 @@ export default function Home() {
     if (currentQuestion.type === 'multiple-choice' && currentQuestion.choices) {
       const choice = currentQuestion.choices.find((c) => c.value === currentAnswer);
       if (choice?.disqualifies) {
-        // Skip to thank you screen (unqualified)
-        setQualified(false);
+        // Skip to thank you screen and submit in background
         setScreen('thank-you');
         submitForm();
         return;
@@ -139,20 +136,12 @@ export default function Home() {
         body: JSON.stringify(formData),
       });
 
-      const result = await response.json();
-      setQualified(result.qualified);
-      
       // Save applicant email for checkout pre-fill
       if (formData.email) {
         try {
           localStorage.setItem('bcp_applicant_email', formData.email);
           localStorage.setItem('bcp_applicant_name', `${formData.first_name || ''} ${formData.last_name || ''}`.trim());
         } catch (e) { /* localStorage not available */ }
-      }
-
-      // Get Cal.com URL if available
-      if (result.calBookingUrl) {
-        setCalBookingUrl(result.calBookingUrl);
       }
       
       setScreen('thank-you');
@@ -193,7 +182,7 @@ export default function Home() {
   }
 
   if (screen === 'thank-you') {
-    return <ThankYouScreen qualified={qualified} calBookingUrl={calBookingUrl} />;
+    return <ThankYouScreen />;
   }
 
   return (

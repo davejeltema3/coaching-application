@@ -100,7 +100,7 @@ export default function PreviewPage() {
             Thank You — Qualified ✅
           </div>
           <div className="bg-slate-950 p-4" style={{ minHeight: 400 }}>
-            <ThankYouScreen qualified={true} />
+            <ThankYouScreen />
           </div>
         </div>
       );
@@ -113,7 +113,7 @@ export default function PreviewPage() {
             Thank You — Unqualified ❌
           </div>
           <div className="bg-slate-950 p-4" style={{ minHeight: 400 }}>
-            <ThankYouScreen qualified={false} />
+            <ThankYouScreen />
           </div>
         </div>
       );
