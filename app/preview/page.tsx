@@ -28,12 +28,11 @@ export default function PreviewPage() {
     { id: 'welcome', label: 'Welcome' },
     ...questions.map((q, i) => ({ id: q.id, label: `Q${i + 1}: ${q.id}` })),
     { id: 'contact', label: 'Contact' },
-    { id: 'qualified', label: 'Qualified' },
-    { id: 'unqualified', label: 'Unqualified' },
+    { id: 'thankyou', label: 'Thank You' },
   ];
 
   // Checkout tabs
-  const alumniPlans = ['3mo', '3mo-plus', '6mo', '6mo-plus'];
+  const alumniPlans = ['3mo', '3mo-plus', '6mo', '6mo-plus', '6mo-monthly'];
   const checkoutTabs = [
     { id: 'all-checkout', label: 'All Plans' },
     ...Object.keys(plans).map((code) => ({ id: `checkout-${code}`, label: code })),
@@ -93,24 +92,11 @@ export default function PreviewPage() {
       );
     }
 
-    if (id === 'qualified') {
+    if (id === 'thankyou') {
       return (
         <div key={id} className="border border-slate-700 rounded-lg overflow-hidden">
           <div className="bg-slate-800 px-4 py-2 text-sm text-slate-400 font-mono">
-            Thank You — Qualified ✅
-          </div>
-          <div className="bg-slate-950 p-4" style={{ minHeight: 400 }}>
-            <ThankYouScreen />
-          </div>
-        </div>
-      );
-    }
-
-    if (id === 'unqualified') {
-      return (
-        <div key={id} className="border border-slate-700 rounded-lg overflow-hidden">
-          <div className="bg-slate-800 px-4 py-2 text-sm text-slate-400 font-mono">
-            Thank You — Unqualified ❌
+            Thank You Screen (all applicants see the same page)
           </div>
           <div className="bg-slate-950 p-4" style={{ minHeight: 400 }}>
             <ThankYouScreen />
@@ -320,6 +306,17 @@ export default function PreviewPage() {
           { label: '3 Monthly Payments', description: '$3,000/mo for 3 months', amount: 3000, total: 9000 },
         ],
       },
+      '6mo-monthly': {
+        name: 'Boundless Creator Program',
+        duration: '6 months',
+        tagline: 'The ultimate coaching experience. Deep Dive strategy, monthly calls, and priority access.',
+        features: ['3-hour Deep Dive strategy call (with prep)', 'Monthly 1:1 accountability call', 'Priority chat support (ASAP response)', 'Community access (Discord)', 'Weekly office hours (Wednesdays 2 PM EST)', 'Personalized strategy document'],
+        price: 9000,
+        originalPrice: 12000,
+        paymentOptions: [
+          { label: '6 Monthly Payments', description: '$1,500/mo for 6 months', amount: 1500, total: 9000 },
+        ],
+      },
     };
 
     const plan = alumniPricing[planCode];
@@ -496,7 +493,7 @@ export default function PreviewPage() {
   if (activeSection === 'application') {
     const screenIds =
       activeTab === 'all'
-        ? ['welcome', ...questions.map((q) => q.id), 'contact', 'qualified', 'unqualified']
+        ? ['welcome', ...questions.map((q) => q.id), 'contact', 'thankyou']
         : [activeTab];
     content = (
       <div className="space-y-8">
@@ -507,7 +504,7 @@ export default function PreviewPage() {
     if (activeTab === 'alumni-divider') {
       content = null; // Divider tab, do nothing
     } else if (activeTab === 'all-alumni') {
-      const alumniPlans = ['3mo', '3mo-plus', '6mo', '6mo-plus'];
+      const alumniPlans = ['3mo', '3mo-plus', '6mo', '6mo-plus', '6mo-monthly'];
       content = (
         <div className="space-y-8">
           {alumniPlans.map((code) => renderAlumniCheckoutScreen(code))}

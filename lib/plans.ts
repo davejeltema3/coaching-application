@@ -151,8 +151,24 @@ export const plans: Record<string, Plan> = {
         amountCents: 400000,
         recurring: { interval: 'month', totalPayments: 3, totalCents: 1200000 },
       },
+    ],
+  },
+  '6mo-monthly': {
+    code: '6mo-monthly',
+    name: 'Boundless Creator Program',
+    duration: '6 months',
+    tagline: 'The ultimate coaching experience. Deep Dive strategy, monthly calls, and priority access.',
+    features: [
+      '3-hour Deep Dive strategy call (with prep)',
+      'Monthly 1:1 accountability call',
+      'Priority chat support (ASAP response)',
+      'Community access (Discord)',
+      'Weekly office hours (Wednesdays 2 PM EST)',
+      'Personalized strategy document',
+    ],
+    paymentOptions: [
       {
-        id: '6mo-plus-6x',
+        id: '6mo-monthly-6x',
         label: '6 Monthly Payments',
         description: '$2,000/mo for 6 months',
         amountCents: 200000,

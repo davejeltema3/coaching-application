@@ -11,12 +11,11 @@ export default function Custom6MonthCheckoutPage() {
   const [logoError, setLogoError] = useState(false);
 
   useEffect(() => {
-    // Always use the 6mo-plus plan for this custom page
-    const bcpPlan = plans['6mo-plus'];
+    // Use the standalone 6mo-monthly plan
+    const bcpPlan = plans['6mo-monthly'];
     if (bcpPlan) {
       setPlan(bcpPlan);
-      // Default to 6-month payment option
-      setSelectedOption('6mo-plus-6x');
+      setSelectedOption('6mo-monthly-6x');
     }
   }, []);
 
