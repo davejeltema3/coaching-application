@@ -3,13 +3,13 @@ import { writeFile, readFile, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join } from 'path';
 import { FormData } from '@/lib/questions';
-import { calculateQualification } from '@/lib/qualification';
+import { calculateQualification, QualificationResult } from '@/lib/qualification';
 
 export async function POST(request: NextRequest) {
   try {
     const data: FormData = await request.json();
 
-    // Calculate qualification server-side (now includes YouTube channel verification)
+    // Calculate qualification (now includes AI evaluation)
     const qualification = await calculateQualification(data);
 
     // Submit to Google Forms if configured
@@ -18,7 +18,6 @@ export async function POST(request: NextRequest) {
         await submitToGoogleForms(data, qualification);
       } catch (error) {
         console.error('Google Forms submission error:', error);
-        // Continue even if Google Forms fails
       }
     }
 
@@ -37,7 +36,15 @@ export async function POST(request: NextRequest) {
         });
       } catch (error) {
         console.error('Kit API error:', error);
-        // Continue even if Kit fails
+      }
+    }
+
+    // Send Discord notification for qualified applications
+    if (qualification.qualified) {
+      try {
+        await sendDiscordNotification(data, qualification);
+      } catch (error) {
+        console.error('Discord notification error:', error);
       }
     }
 
@@ -46,15 +53,11 @@ export async function POST(request: NextRequest) {
       await saveSubmission(data, qualification);
     } catch (error) {
       console.error('Local save error:', error);
-      // Continue even if local save fails
     }
 
-    // Return qualification result
-    // NOTE: Calendar link temporarily disabled until channel verification is live
     return NextResponse.json({
       qualified: qualification.qualified,
       score: qualification.score,
-      // calBookingUrl: process.env.CAL_BOOKING_URL || 'https://cal.com/davejeltema/bcp-1',
     });
   } catch (error) {
     console.error('Submission error:', error);
@@ -64,6 +67,51 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+// ── Discord Notification ──────────────────────────────────────────────
+
+async function sendDiscordNotification(data: FormData, qualification: QualificationResult) {
+  const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+  if (!webhookUrl) return;
+
+  const stats = qualification.channelVerified?.stats;
+  const ai = qualification.aiEvaluation;
+
+  const embed = {
+    title: '🔔 Qualified BCP Application',
+    color: 0x22c55e, // green
+    fields: [
+      { name: 'Name', value: `${data.first_name || ''} ${data.last_name || ''}`.trim() || 'Unknown', inline: true },
+      { name: 'Email', value: data.email || 'N/A', inline: true },
+      { name: 'Phone', value: data.phone || 'N/A', inline: true },
+      { name: 'Channel', value: data.channel_url ? `[View Channel](${data.channel_url})` : 'N/A', inline: false },
+      ...(stats ? [
+        { name: 'Videos', value: `${stats.videoCount} total (${stats.recentVideoCount} recent)`, inline: true },
+        { name: 'Avg Views', value: `${Math.round(stats.averageViews).toLocaleString()}`, inline: true },
+        { name: 'Best Video', value: `${stats.maxViews.toLocaleString()} views`, inline: true },
+      ] : []),
+      { name: 'Content Type', value: data.content_type || 'N/A', inline: false },
+      { name: 'Biggest Challenge', value: truncate(data.challenge || 'N/A', 200), inline: false },
+      ...(ai ? [
+        { name: `AI Assessment (${ai.confidence})`, value: ai.reasoning, inline: false },
+      ] : []),
+    ],
+    timestamp: new Date().toISOString(),
+  };
+
+  await fetch(webhookUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ embeds: [embed] }),
+  });
+}
+
+function truncate(text: string, max: number): string {
+  if (text.length <= max) return text;
+  return text.substring(0, max - 3) + '...';
+}
+
+// ── Kit (ConvertKit) ──────────────────────────────────────────────────
 
 interface KitExtraData {
   phone?: string;
@@ -125,8 +173,6 @@ async function subscribeToKit(email: string, firstName: string, extra?: KitExtra
   }
 
   // Step 3: Tag with qualification-specific tag
-  // Qualified → "BCP Applicant Qualified" (triggers booking nudge sequence)
-  // Unqualified → "BCP Applicant Unqualified" (triggers free resources sequence)
   const qualTagId = extra?.qualified
     ? (process.env.KIT_TAG_QUALIFIED || '15773880')
     : (process.env.KIT_TAG_UNQUALIFIED || '15773881');
@@ -145,11 +191,12 @@ async function subscribeToKit(email: string, firstName: string, extra?: KitExtra
   }
 }
 
-async function submitToGoogleForms(data: FormData, qualification: { qualified: boolean; score: number }) {
+// ── Google Forms ──────────────────────────────────────────────────────
+
+async function submitToGoogleForms(data: FormData, qualification: QualificationResult) {
   const formUrl = process.env.GOOGLE_FORM_ACTION_URL;
   if (!formUrl) return;
 
-  // Build form data with Google Forms field entry IDs
   const formData = new URLSearchParams();
 
   const fieldMap: Record<string, string | undefined> = {
@@ -171,7 +218,6 @@ async function submitToGoogleForms(data: FormData, qualification: { qualified: b
     investment_ready: process.env.GOOGLE_FORM_FIELD_INVESTMENT_READY,
   };
 
-  // Add each field to form data
   Object.entries(fieldMap).forEach(([key, entryId]) => {
     const value = data[key as keyof FormData];
     if (entryId && value) {
@@ -186,58 +232,61 @@ async function submitToGoogleForms(data: FormData, qualification: { qualified: b
   if (process.env.GOOGLE_FORM_FIELD_SCORE) {
     formData.append(process.env.GOOGLE_FORM_FIELD_SCORE, qualification.score.toString());
   }
+
+  // Add AI evaluation to the sheet
+  if (process.env.GOOGLE_FORM_FIELD_AI_EVAL && qualification.aiEvaluation) {
+    const ai = qualification.aiEvaluation;
+    const evalText = `[${ai.confidence.toUpperCase()}] ${ai.reasoning}`;
+    formData.append(process.env.GOOGLE_FORM_FIELD_AI_EVAL, evalText);
+  }
+
   if (process.env.GOOGLE_FORM_FIELD_CALL_BOOKED) {
-    formData.append(process.env.GOOGLE_FORM_FIELD_CALL_BOOKED, ''); // Blank until Cal.com webhook
+    formData.append(process.env.GOOGLE_FORM_FIELD_CALL_BOOKED, '');
   }
   if (process.env.GOOGLE_FORM_FIELD_OUTREACH_SENT) {
-    formData.append(process.env.GOOGLE_FORM_FIELD_OUTREACH_SENT, ''); // Blank, Dave updates manually
+    formData.append(process.env.GOOGLE_FORM_FIELD_OUTREACH_SENT, '');
   }
   if (process.env.GOOGLE_FORM_FIELD_STATUS) {
     formData.append(process.env.GOOGLE_FORM_FIELD_STATUS, 'Applied');
   }
   if (process.env.GOOGLE_FORM_FIELD_PURCHASE_STATUS) {
-    formData.append(process.env.GOOGLE_FORM_FIELD_PURCHASE_STATUS, ''); // Blank until payment
+    formData.append(process.env.GOOGLE_FORM_FIELD_PURCHASE_STATUS, '');
   }
   if (process.env.GOOGLE_FORM_FIELD_NOTES) {
     formData.append(process.env.GOOGLE_FORM_FIELD_NOTES, '');
   }
 
-  // Submit to Google Forms
   await fetch(formUrl, {
     method: 'POST',
     body: formData,
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
   });
 }
 
+// ── Local Backup ──────────────────────────────────────────────────────
+
 async function saveSubmission(
   data: FormData,
-  qualification: { qualified: boolean; score: number }
+  qualification: QualificationResult
 ) {
   const dataDir = join(process.cwd(), 'data');
   const filePath = join(dataDir, 'submissions.json');
 
-  // Ensure data directory exists
   if (!existsSync(dataDir)) {
     await mkdir(dataDir, { recursive: true });
   }
 
-  // Read existing submissions
   let submissions: any[] = [];
   if (existsSync(filePath)) {
     const content = await readFile(filePath, 'utf-8');
     submissions = JSON.parse(content);
   }
 
-  // Add new submission
   submissions.push({
     timestamp: new Date().toISOString(),
     data,
     qualification,
   });
 
-  // Write back to file
   await writeFile(filePath, JSON.stringify(submissions, null, 2));
 }
