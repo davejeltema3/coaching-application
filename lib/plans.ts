@@ -22,7 +22,7 @@ export interface Plan {
 export const plans: Record<string, Plan> = {
   '3mo': {
     code: '3mo',
-    name: 'Boundless Creator Program',
+    name: 'Boundless Creator Accelerator',
     duration: '3 months',
     tagline: 'Kickstart your channel growth with focused, personalized coaching.',
     features: [
@@ -49,7 +49,7 @@ export const plans: Record<string, Plan> = {
   },
   '3mo-plus': {
     code: '3mo-plus',
-    name: 'Boundless Creator Program',
+    name: 'Boundless Creator Accelerator',
     duration: '3 months',
     tagline: 'The full Deep Dive experience with hands-on strategy and accountability.',
     features: [
@@ -85,7 +85,7 @@ export const plans: Record<string, Plan> = {
   },
   '6mo': {
     code: '6mo',
-    name: 'Boundless Creator Program',
+    name: 'Boundless Creator Accelerator',
     duration: '6 months',
     tagline: 'Six months of focused coaching to transform your channel.',
     features: [
@@ -119,7 +119,7 @@ export const plans: Record<string, Plan> = {
   },
   '6mo-plus': {
     code: '6mo-plus',
-    name: 'Boundless Creator Program',
+    name: 'Boundless Creator Accelerator',
     duration: '6 months',
     tagline: 'The ultimate coaching experience. Deep Dive strategy, monthly calls, and priority access.',
     features: [
@@ -155,7 +155,7 @@ export const plans: Record<string, Plan> = {
   },
   '6mo-monthly': {
     code: '6mo-monthly',
-    name: 'Boundless Creator Program',
+    name: 'Boundless Creator Accelerator',
     duration: '6 months',
     tagline: 'The ultimate coaching experience. Deep Dive strategy, monthly calls, and priority access.',
     features: [

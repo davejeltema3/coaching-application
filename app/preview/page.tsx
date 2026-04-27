@@ -256,7 +256,7 @@ export default function PreviewPage() {
   const renderAlumniCheckoutScreen = (planCode: string) => {
     const alumniPricing: Record<string, { name: string; duration: string; tagline: string; features: string[]; price: number; originalPrice: number; paymentOptions: Array<{ label: string; description: string; amount: number; total?: number }> }> = {
       '3mo': {
-        name: 'Boundless Creator Program',
+        name: 'Boundless Creator Accelerator',
         duration: '3 months',
         tagline: 'Kickstart your channel growth with focused, personalized coaching.',
         features: ['30-minute onboarding call', 'Community access (Discord)', 'Weekly office hours (Wednesdays 2 PM EST)', 'Direct messaging support'],
@@ -268,7 +268,7 @@ export default function PreviewPage() {
         ],
       },
       '3mo-plus': {
-        name: 'Boundless Creator Program',
+        name: 'Boundless Creator Accelerator',
         duration: '3 months',
         tagline: 'The full Deep Dive experience with hands-on strategy and accountability.',
         features: ['3-hour Deep Dive strategy call (with prep)', 'Monthly 1:1 accountability call', 'Priority chat support (ASAP response)', 'Community access (Discord)', 'Weekly office hours (Wednesdays 2 PM EST)', 'Personalized strategy document'],
@@ -281,7 +281,7 @@ export default function PreviewPage() {
         ],
       },
       '6mo': {
-        name: 'Boundless Creator Program',
+        name: 'Boundless Creator Accelerator',
         duration: '6 months',
         tagline: 'Six months of focused coaching to transform your channel.',
         features: ['30-minute onboarding call', 'Community access (Discord)', 'Weekly office hours (Wednesdays 2 PM EST)', 'Direct messaging support'],
@@ -294,7 +294,7 @@ export default function PreviewPage() {
         ],
       },
       '6mo-plus': {
-        name: 'Boundless Creator Program',
+        name: 'Boundless Creator Accelerator',
         duration: '6 months',
         tagline: 'The ultimate coaching experience. Deep Dive strategy, monthly calls, and priority access.',
         features: ['3-hour Deep Dive strategy call (with prep)', 'Monthly 1:1 accountability call', 'Priority chat support (ASAP response)', 'Community access (Discord)', 'Weekly office hours (Wednesdays 2 PM EST)', 'Personalized strategy document'],
@@ -307,7 +307,7 @@ export default function PreviewPage() {
         ],
       },
       '6mo-monthly': {
-        name: 'Boundless Creator Program',
+        name: 'Boundless Creator Accelerator',
         duration: '6 months',
         tagline: 'The ultimate coaching experience. Deep Dive strategy, monthly calls, and priority access.',
         features: ['3-hour Deep Dive strategy call (with prep)', 'Monthly 1:1 accountability call', 'Priority chat support (ASAP response)', 'Community access (Discord)', 'Weekly office hours (Wednesdays 2 PM EST)', 'Personalized strategy document'],

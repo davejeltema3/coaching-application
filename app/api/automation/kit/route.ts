@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
       if (phone) {
         await sendWhatsApp(
           phone,
-          `Hey ${name}! Thanks so much for applying to the Boundless Creator Program. I'm going to look through your application and get back to you soon!`
+          `Hey ${name}! Thanks so much for applying to the Boundless Creator Accelerator. I'm going to look through your application and get back to you soon!`
         );
       }
 
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
       if (phone && discordInvite) {
         await sendWhatsApp(
           phone,
-          `Hey ${name}! Welcome to the Boundless Creator Program! 🎉 Here's your personal Discord invite to join the community: ${discordInvite} — This link expires in 7 days and is just for you. Can't wait to get started!`
+          `Hey ${name}! Welcome to the Boundless Creator Accelerator! 🎉 Here's your personal Discord invite to join the community: ${discordInvite} — This link expires in 7 days and is just for you. Can't wait to get started!`
         );
       }
 

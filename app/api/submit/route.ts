@@ -240,7 +240,8 @@ async function submitToGoogleForms(data: FormData, qualification: QualificationR
   // Add AI evaluation to the sheet
   if (process.env.GOOGLE_FORM_FIELD_AI_EVAL && qualification.aiEvaluation) {
     const ai = qualification.aiEvaluation;
-    const evalText = `[${ai.confidence.toUpperCase()}] ${ai.reasoning}`;
+    const verdict = ai.qualified ? '✅ QUALIFIED' : '❌ NOT QUALIFIED';
+    const evalText = `${verdict} (${ai.confidence} confidence): ${ai.reasoning}`;
     formData.append(process.env.GOOGLE_FORM_FIELD_AI_EVAL, evalText);
   }
 

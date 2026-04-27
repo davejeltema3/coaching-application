@@ -39,6 +39,11 @@ export async function calculateQualification(data: FormData): Promise<Qualificat
 
   // Step 2: If hard-disqualified (not active creator, not ready to invest), skip AI
   if (disqualified) {
+    const readableReasons: Record<string, string> = {
+      active_creator: 'Not an active YouTube creator',
+      investment_ready: 'Not ready to invest at this time',
+    };
+    const readableReason = readableReasons[disqualifyReason || ''] || disqualifyReason || 'Unknown disqualifier';
     return {
       qualified: false,
       score,
@@ -46,7 +51,7 @@ export async function calculateQualification(data: FormData): Promise<Qualificat
       disqualifyReason,
       aiEvaluation: {
         qualified: false,
-        reasoning: `Auto-disqualified: ${disqualifyReason}`,
+        reasoning: `Auto-disqualified: ${readableReason}. No AI evaluation performed — this is a hard disqualifier from the application form.`,
         confidence: 'high',
       },
     };
@@ -72,16 +77,14 @@ export async function calculateQualification(data: FormData): Promise<Qualificat
   }
 
   // Step 5: Determine final qualification
-  // AI is primary. If AI is unavailable, fall back to score-based.
+  // AI is the sole decision maker. No fallback to old scoring.
+  // If AI is unavailable, default to unqualified (safe — Dave can review manually).
   let qualified: boolean;
-  if (aiEvaluation && aiEvaluation.confidence !== 'low') {
+  if (aiEvaluation) {
     qualified = aiEvaluation.qualified;
   } else {
-    // Fallback: old scoring system
-    qualified = score >= 3 && !disqualified;
-    if (channelVerified && !channelVerified.verified) {
-      qualified = false;
-    }
+    // AI unavailable — don't auto-qualify anyone
+    qualified = false;
   }
 
   return {

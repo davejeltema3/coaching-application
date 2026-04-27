@@ -19,10 +19,45 @@ const API_KEY = process.env.YOUTUBE_API_KEY || process.env.YT_API_KEY;
 const API_BASE = 'https://www.googleapis.com/youtube/v3';
 
 /**
- * Derives a YouTube channel ID from its public URL.
- * Supports /channel/{id}, /user/{username}, and /@handle URLs.
+ * Normalizes messy channel URL input into a proper YouTube URL.
+ * Handles: bare @handle, missing protocol, missing slash before @,
+ * youtube.com without www, extra whitespace, etc.
  */
-async function getChannelId(url: string): Promise<string> {
+function normalizeChannelUrl(raw: string): string {
+  let url = raw.trim();
+
+  // Strip surrounding quotes if any
+  url = url.replace(/^["']|["']$/g, '');
+
+  // Bare handle: "@something" or "something" that looks like a handle
+  if (/^@[\w.-]+$/i.test(url)) {
+    return `https://www.youtube.com/${url}`;
+  }
+
+  // Missing protocol: "youtube.com/@handle" or "www.youtube.com/@handle"
+  if (/^(www\.)?youtube\.com/i.test(url)) {
+    return `https://${url}`;
+  }
+
+  // Missing slash before @: "https://www.youtube.com@handle"
+  url = url.replace(/(youtube\.com)(@)/i, '$1/$2');
+
+  // Missing @ after youtube.com/: "youtube.com/handle" (not /channel/ or /user/ or /c/)
+  const afterDomain = url.match(/youtube\.com\/([^@/][^/]*)\s*$/i);
+  if (afterDomain && !['channel', 'user', 'c', 'watch', 'playlist', 'shorts', 'live'].includes(afterDomain[1].toLowerCase())) {
+    url = url.replace(/(youtube\.com\/)([^@])/, '$1@$2');
+  }
+
+  return url;
+}
+
+/**
+ * Derives a YouTube channel ID from its public URL.
+ * Supports /channel/{id}, /user/{username}, /@handle, and /c/custom URLs.
+ * Input is normalized first to handle messy formatting.
+ */
+async function getChannelId(rawUrl: string): Promise<string> {
+  const url = normalizeChannelUrl(rawUrl);
   const u = new URL(url);
   const parts = u.pathname.split('/').filter(Boolean);
   
@@ -40,6 +75,18 @@ async function getChannelId(url: string): Promise<string> {
     const item = res.data.items?.[0];
     if (item && item.id) {
       return item.id;
+    }
+  }
+
+  // Custom URL (/c/customname)
+  if (parts[0] === 'c' && parts[1]) {
+    // Try as handle first (YouTube deprecated /c/ in favor of @handles)
+    const res = await axios.get(`${API_BASE}/search`, {
+      params: { key: API_KEY, part: 'snippet', type: 'channel', q: parts[1], maxResults: 1 },
+    });
+    const item = res.data.items?.[0];
+    if (item?.snippet?.channelId) {
+      return item.snippet.channelId;
     }
   }
   

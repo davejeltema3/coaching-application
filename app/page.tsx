@@ -64,8 +64,9 @@ export default function Home() {
 
   const validateChannelUrl = (url: string): boolean => {
     if (!url) return false;
-    const lowercaseUrl = url.toLowerCase();
-    return lowercaseUrl.includes('youtube.com') || lowercaseUrl.includes('youtu.be') || lowercaseUrl.includes('@');
+    const trimmed = url.trim().toLowerCase();
+    // Accept: youtube.com URLs, youtu.be URLs, bare @handles, or anything with "youtube" in it
+    return trimmed.includes('youtube.com') || trimmed.includes('youtu.be') || trimmed.startsWith('@') || trimmed.includes('youtube');
   };
 
   const validatePhone = (phone: string): boolean => {

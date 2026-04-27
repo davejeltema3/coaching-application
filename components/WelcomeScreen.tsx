@@ -25,7 +25,7 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
             BCP Application
           </h1>
           <p className="text-lg md:text-xl text-slate-300 mb-8 leading-relaxed">
-            Thanks for your interest in the <span className="text-blue-400 font-semibold">Boundless Creator Program</span>.
+            Thanks for your interest in the <span className="text-blue-400 font-semibold">Boundless Creator Accelerator</span>.
             This quick application helps me understand where you&apos;re at and if we&apos;re a good fit.
           </p>
           <p className="text-slate-400 mb-10">Takes about 2 minutes.</p>

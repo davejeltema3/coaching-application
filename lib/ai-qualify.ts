@@ -76,15 +76,15 @@ export async function aiQualify(
 }
 
 function truncateReasoning(text: string): string {
-  // Keep it concise for the sheet cell - max ~300 chars
-  if (text.length <= 300) return text;
-  return text.substring(0, 297) + '...';
+  // Allow full reasoning — 1500 chars is plenty for a sheet cell
+  if (text.length <= 1500) return text;
+  return text.substring(0, 1497) + '...';
 }
 
 function buildPrompt(data: FormData, channelStats?: VerifyResult): string {
   const statsSection = channelStats?.stats
     ? `
-YOUTUBE CHANNEL DATA (verified):
+YOUTUBE CHANNEL DATA (verified via API — these are FACTS, not self-reported):
 - Total videos: ${channelStats.stats.videoCount}
 - Videos in last 6 months: ${channelStats.stats.recentVideoCount}
 - Average views per video: ${Math.round(channelStats.stats.averageViews)}
@@ -92,9 +92,12 @@ YOUTUBE CHANNEL DATA (verified):
 - Channel URL: ${data.channel_url || 'not provided'}
 - Verification status: ${channelStats.verified ? 'PASSED' : `FAILED - ${channelStats.reason}`}`
     : `
-YOUTUBE CHANNEL DATA: Could not verify (URL: ${data.channel_url || 'not provided'})`;
+YOUTUBE CHANNEL DATA: Could not verify (URL: ${data.channel_url || 'not provided'})
+NOTE: If channel data is unavailable, be MORE skeptical of self-reported claims.`;
 
-  return `You are evaluating applications for the Boundless Creator Program (BCP), a premium 1-on-1 YouTube coaching program costing $6,000-$9,600. The coach (Dave) personally prepares for each call and invests significant time, so unqualified calls are a serious waste.
+  return `You are evaluating applications for the Boundless Creator Accelerator, a premium 1-on-1 YouTube coaching program costing $6,000-$9,600. The coach (Dave) personally prepares for each sales call and invests significant time per client. An unqualified call wastes 30-60 minutes of his day.
+
+YOUR JOB IS NOT TO REPHRASE THEIR ANSWERS. Your job is to VERIFY and CROSS-REFERENCE their claims against real data, then make an independent judgment.
 
 WHAT THIS PROGRAM IS FOR:
 - Educational/teaching YouTube creators who teach a skill, solve a problem, or share expertise
@@ -106,16 +109,25 @@ WHAT THIS PROGRAM IS NOT FOR:
 - Gaming channels, ASMR channels, entertainment/reaction channels, vlog channels
 - Brand new creators who just started or are still figuring things out
 - People who didn't watch the sales video and don't understand what this is
-- Aspirational creators who want to learn the basics (a separate offer is being built for them)
+- Aspirational creators who want to learn the basics
+
+CRITICAL — CROSS-REFERENCE THEIR ANSWERS AGAINST THE DATA:
+- If they say they upload weekly but the channel data shows 3 videos in 6 months, FLAG THAT.
+- If they claim thousands of views but verified average is under 100, FLAG THAT.
+- If they say they're an educational creator but you can see from their content type it's gaming/vlogs/entertainment, FLAG THAT.
+- If they describe ambitious goals but their channel shows minimal effort (few videos, long gaps), FLAG THAT.
+- People tend to present themselves in the best light. Your job is to see through that using the real data.
+- DO NOT take their self-reported answers at face value. Always compare claims to verified channel stats.
 
 GENERAL BENCHMARKS (not hard rules, use judgment):
-- Channel active for more than 3 months
+- Channel active for more than 3 months with consistent uploads
 - More than 10 videos published
-- Videos getting more than 500 views on average
+- Videos getting more than 500 views on average (verified, not self-reported)
 - Content is clearly educational/skill-based/problem-solving
-- Answers show genuine understanding of what they're signing up for
+- Answers show genuine understanding of what they're signing up for and realistic expectations
+- Their stated goals align with what this program actually offers
 
-APPLICATION ANSWERS:
+APPLICATION ANSWERS (self-reported — verify against channel data where possible):
 - Name: ${data.first_name || ''} ${data.last_name || ''}
 - Active creator: ${data.active_creator || 'not answered'}
 - Time creating: ${data.duration || 'not answered'}
@@ -132,8 +144,8 @@ ${statsSection}
 
 EVALUATE THIS APPLICATION. Return JSON with:
 - "qualified": true/false - Is this person worth Dave's time for a sales call?
-- "reasoning": A concise 1-3 sentence summary explaining why they are or aren't qualified. Include specific details from their application. This goes in a spreadsheet cell so keep it brief.
+- "reasoning": A thorough evaluation. Start with what the verified data actually shows. Note any discrepancies between self-reported answers and real data. Then give your assessment of fit. Be specific — cite numbers, flag mismatches, explain your reasoning. This goes in a spreadsheet so Dave can quickly understand your verdict without re-reviewing the application himself.
 - "confidence": "high" if the decision is clear, "medium" if borderline, "low" if insufficient data.
 
-Be selective. It's better to miss a borderline candidate than waste Dave's time on someone who clearly isn't ready or isn't the right type of creator.`;
+LEAN TOWARD UNQUALIFIED. It's better to miss a borderline candidate than waste Dave's time. Most applicants are not qualified — that's normal. A "qualified" result should mean you'd genuinely bet money this person is a good fit.`;
 }
