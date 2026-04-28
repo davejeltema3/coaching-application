@@ -50,11 +50,41 @@ export async function POST(request: NextRequest) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
         
-        // If this is a subscription checkout, log it for tracking
+        const name = session.customer_details?.name || 'Unknown';
+        const email = session.customer_details?.email || 'N/A';
+        const amount = session.amount_total ? `$${(session.amount_total / 100).toLocaleString()}` : 'N/A';
+        const plan = session.metadata?.plan_code || 'unknown';
+        const duration = session.metadata?.duration || '';
+
+        // Discord notification
+        if (process.env.DISCORD_WEBHOOK_URL) {
+          try {
+            await fetch(process.env.DISCORD_WEBHOOK_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                embeds: [{
+                  title: '💰 New Accelerator Payment!',
+                  color: 0x3b82f6,
+                  fields: [
+                    { name: 'Name', value: name, inline: true },
+                    { name: 'Email', value: email, inline: true },
+                    { name: 'Amount', value: amount, inline: true },
+                    { name: 'Plan', value: `${plan} (${duration})`, inline: true },
+                    { name: 'Type', value: session.mode === 'subscription' ? 'Payment Plan' : 'Paid in Full', inline: true },
+                    { name: 'Stripe', value: `[View](https://dashboard.stripe.com/payments/${session.payment_intent})`, inline: true },
+                  ],
+                  timestamp: new Date().toISOString(),
+                }],
+              }),
+            });
+          } catch (err) {
+            console.error('Discord notification failed:', err);
+          }
+        }
+
         if (session.mode === 'subscription' && session.subscription) {
           console.log(`New subscription created: ${session.subscription}`);
-          console.log(`Customer email: ${session.customer_email}`);
-          console.log(`Metadata:`, session.metadata);
         }
         
         break;
