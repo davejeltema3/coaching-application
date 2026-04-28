@@ -78,26 +78,5 @@ ${name ? `**Name:** ${name}` : ''}
     }
   }
 
-  // Send to WhatsApp via OpenClaw (optional)
-  const whatsappMessage = `🎉 NEW BCP MEMBER!\n\nEmail: ${email || 'Unknown'}\n${name ? `Name: ${name}\n` : ''}\nTime: ${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })} EST\n\nNext: Send welcome + add to Discord`;
-
-  if (process.env.OPENCLAW_GATEWAY_URL && process.env.OPENCLAW_GATEWAY_TOKEN) {
-    try {
-      await fetch(`${process.env.OPENCLAW_GATEWAY_URL}/api/message/send`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.OPENCLAW_GATEWAY_TOKEN}`,
-        },
-        body: JSON.stringify({
-          channel: 'whatsapp',
-          to: '+16163084220',
-          message: whatsappMessage,
-        }),
-      });
-      console.log('WhatsApp notification sent');
-    } catch (error) {
-      console.error('WhatsApp notification failed:', error);
-    }
-  }
+  // WhatsApp notification removed — Discord is primary notification channel
 }
