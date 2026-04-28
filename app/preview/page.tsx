@@ -176,8 +176,8 @@ export default function PreviewPage() {
 
     return (
       <div key={planCode} className="border border-slate-700 rounded-lg overflow-hidden">
-        <div className="bg-slate-800 px-4 py-2 text-sm text-slate-400 font-mono flex justify-between">
-          <span>Checkout: /checkout?plan={planCode}</span>
+        <div className="bg-slate-800 px-4 py-2 text-sm font-mono flex justify-between">
+          <span className="text-slate-400">Checkout: <a href={`/checkout?plan=${planCode}`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">/checkout?plan={planCode}</a></span>
           <span className="text-green-400">{formatCents(plan.paymentOptions[0].amountCents)}</span>
         </div>
         <div className="bg-slate-950 p-6">
@@ -324,8 +324,8 @@ export default function PreviewPage() {
 
     return (
       <div key={`alumni-${planCode}`} className="border border-slate-700 rounded-lg overflow-hidden">
-        <div className="bg-slate-800 px-4 py-2 text-sm text-slate-400 font-mono flex justify-between">
-          <span>Checkout: /checkout/alumni/{planCode}</span>
+        <div className="bg-slate-800 px-4 py-2 text-sm font-mono flex justify-between">
+          <span className="text-slate-400">Checkout: <a href={`/checkout/alumni/${planCode}`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">/checkout/alumni/{planCode}</a></span>
           <span className="text-green-400">${plan.price} (25% off ${plan.originalPrice})</span>
         </div>
         <div className="bg-slate-950 p-6">
