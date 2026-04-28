@@ -13,7 +13,7 @@ const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GE
 
 /**
  * Uses Gemini to evaluate whether an applicant is a genuine fit
- * for the BCP coaching program ($6,000-$9,600).
+ * for the BCA coaching program ($6,000-$9,600).
  */
 export async function aiQualify(
   data: FormData,

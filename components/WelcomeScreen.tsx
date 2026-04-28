@@ -22,7 +22,7 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
         )}
         <div className="bg-slate-900 border border-slate-800 rounded-lg p-8 md:p-12 shadow-xl">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            BCP Application
+            BCA Application
           </h1>
           <p className="text-lg md:text-xl text-slate-300 mb-8 leading-relaxed">
             Thanks for your interest in the <span className="text-blue-400 font-semibold">Boundless Creator Accelerator</span>.

@@ -135,7 +135,7 @@ export default function WelcomePage() {
           </div>
 
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Welcome to the BCP{data.customerName ? `, ${data.customerName.split(' ')[0]}` : ''}!
+            Welcome to the BCA{data.customerName ? `, ${data.customerName.split(' ')[0]}` : ''}!
           </h1>
 
           <p className="text-lg text-slate-300 mb-8 leading-relaxed">

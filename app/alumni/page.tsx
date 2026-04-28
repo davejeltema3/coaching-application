@@ -160,7 +160,7 @@ export default function AlumniOfferPage() {
               Book a Call
             </a>
             <a
-              href="mailto:hello@boundlesscreator.com?subject=Alumni%20Payment%20-%20BCP"
+              href="mailto:hello@boundlesscreator.com?subject=Alumni%20Payment%20-%20BCA"
               className="px-6 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg font-semibold transition-colors"
             >
               Email Dave

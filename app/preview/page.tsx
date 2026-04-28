@@ -423,7 +423,7 @@ export default function PreviewPage() {
                     </div>
                   </div>
                   <h1 className="text-3xl font-bold text-white mb-4">
-                    Welcome to the BCP, Dave!
+                    Welcome to the BCA, Dave!
                   </h1>
                   <p className="text-lg text-slate-300 mb-8">
                     Your payment is confirmed. I&apos;m excited to work with you.
@@ -548,7 +548,7 @@ export default function PreviewPage() {
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between mb-3">
             <h1 className="text-xl font-bold text-white">
-              BCP Application — Preview
+              BCA Application — Preview
             </h1>
             <span className="text-sm text-slate-400">
               {Object.keys(plans).length} plans · {questions.length} questions · Full funnel

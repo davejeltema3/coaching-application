@@ -122,7 +122,7 @@ export const questions: Question[] = [
     id: 'investment_ready',
     type: 'multiple-choice',
     question: 'Are you prepared to invest in your growth?',
-    subtext: "The BCP is a serious investment in your channel's future.",
+    subtext: "The BCA is a serious investment in your channel's future.",
     choices: [
       {
         text: "Yes, I'm ready to invest in my growth",
