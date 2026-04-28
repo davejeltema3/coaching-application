@@ -1,10 +1,47 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
+/**
+ * Stripe webhook handler for the Accelerator (apply.boundlesscreator.com).
+ * 
+ * Supports TWO webhook secrets so you can have separate Stripe webhooks:
+ *   - STRIPE_WEBHOOK_SECRET: Original webhook (payment plan management)
+ *   - STRIPE_WEBHOOK_SECRET_NOTIFICATIONS: New webhook (checkout.session.completed notifications)
+ * 
+ * Both Stripe webhooks point to the same URL:
+ *   https://apply.boundlesscreator.com/api/webhooks/stripe
+ * 
+ * The route tries both secrets to verify the signature.
+ */
+
 function getStripe() {
   return new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: '2026-01-28.clover' as Stripe.LatestApiVersion,
   });
+}
+
+function verifyWebhook(stripe: Stripe, body: string, signature: string): Stripe.Event {
+  // Collect all configured webhook secrets
+  const secrets = [
+    process.env.STRIPE_WEBHOOK_SECRET,
+    process.env.STRIPE_WEBHOOK_SECRET_NOTIFICATIONS,
+  ].filter(Boolean) as string[];
+
+  if (secrets.length === 0) {
+    throw new Error('No webhook secrets configured');
+  }
+
+  // Try each secret — whichever one matches is the right webhook
+  let lastError: Error | null = null;
+  for (const secret of secrets) {
+    try {
+      return stripe.webhooks.constructEvent(body, signature, secret);
+    } catch (err: any) {
+      lastError = err;
+    }
+  }
+
+  throw lastError || new Error('Webhook verification failed');
 }
 
 export async function POST(request: NextRequest) {
@@ -18,24 +55,11 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // If webhook secret is not configured, log warning but don't fail
-  if (!process.env.STRIPE_WEBHOOK_SECRET) {
-    console.warn('STRIPE_WEBHOOK_SECRET not configured - webhook verification disabled!');
-    return NextResponse.json(
-      { error: 'Webhook secret not configured' },
-      { status: 500 }
-    );
-  }
-
   let event: Stripe.Event;
 
   try {
     const body = await request.text();
-    event = stripe.webhooks.constructEvent(
-      body,
-      signature,
-      process.env.STRIPE_WEBHOOK_SECRET
-    );
+    event = verifyWebhook(stripe, body, signature);
   } catch (err: any) {
     console.error('Webhook signature verification failed:', err.message);
     return NextResponse.json(
