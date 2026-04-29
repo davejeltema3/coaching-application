@@ -77,27 +77,61 @@ export async function POST(request: NextRequest) {
         const name = session.customer_details?.name || 'Unknown';
         const email = session.customer_details?.email || 'N/A';
         const amount = session.amount_total ? `$${(session.amount_total / 100).toLocaleString()}` : 'N/A';
-        const plan = session.metadata?.plan_code || 'unknown';
+        const plan = session.metadata?.plan_code || '';
         const duration = session.metadata?.duration || '';
+        const program = session.metadata?.program || '';
+
+        // Determine what type of payment this is
+        const isAccelerator = plan || program === 'bca' || duration;
+        const isBCP = program === 'bcp-founders';
+
+        // Skip BCP payments — they're handled by the BCP webhook
+        if (isBCP) {
+          console.log('Skipping BCP payment — handled by BCP webhook');
+          break;
+        }
 
         // Discord notification
         if (process.env.DISCORD_WEBHOOK_URL) {
+          // Classify the payment
+          let title: string;
+          let color: number;
+
+          if (isAccelerator) {
+            title = '💰 New Accelerator Payment!';
+            color = 0x3b82f6; // blue
+          } else {
+            // Not an Accelerator or BCP payment — likely a plugin donation, tip, or other Stripe payment
+            title = '🎁 New Payment Received!';
+            color = 0x22c55e; // green
+          }
+
           try {
+            const fields = [
+              { name: 'Name', value: name, inline: true },
+              { name: 'Email', value: email, inline: true },
+              { name: 'Amount', value: amount, inline: true },
+            ];
+
+            if (isAccelerator) {
+              fields.push(
+                { name: 'Plan', value: `${plan} (${duration})`, inline: true },
+                { name: 'Type', value: session.mode === 'subscription' ? 'Payment Plan' : 'Paid in Full', inline: true },
+              );
+            }
+
+            fields.push(
+              { name: 'Stripe', value: `[View](https://dashboard.stripe.com/payments/${session.payment_intent})`, inline: true },
+            );
+
             await fetch(process.env.DISCORD_WEBHOOK_URL, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 embeds: [{
-                  title: '💰 New Accelerator Payment!',
-                  color: 0x3b82f6,
-                  fields: [
-                    { name: 'Name', value: name, inline: true },
-                    { name: 'Email', value: email, inline: true },
-                    { name: 'Amount', value: amount, inline: true },
-                    { name: 'Plan', value: `${plan} (${duration})`, inline: true },
-                    { name: 'Type', value: session.mode === 'subscription' ? 'Payment Plan' : 'Paid in Full', inline: true },
-                    { name: 'Stripe', value: `[View](https://dashboard.stripe.com/payments/${session.payment_intent})`, inline: true },
-                  ],
+                  title,
+                  color,
+                  fields,
                   timestamp: new Date().toISOString(),
                 }],
               }),
